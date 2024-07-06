@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import * as path from "path";
-import * as fs from "fs";
+import { Injectable } from '@nestjs/common';
+import * as path from 'path';
+import * as fs from 'fs';
 
 interface SaveFileOptions {
   file: Express.Multer.File;
@@ -10,8 +10,8 @@ interface SaveFileOptions {
 
 @Injectable()
 export class FileUtil {
-  private readonly baseFolder = path.join(__dirname, "..", "..", "uploads");
-  private readonly placeholderFilename = "placeholder.png";
+  private readonly baseFolder = path.join(__dirname, '..', '..', 'uploads');
+  private readonly placeholderFilename = 'placeholder.png';
 
   constructor() {
     this.ensureBaseFolderExists();
