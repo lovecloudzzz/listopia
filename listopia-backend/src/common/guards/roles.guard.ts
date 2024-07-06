@@ -1,13 +1,25 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { UserRole } from '../interfaces/user-role.enum';
+import { UserRole } from '@prisma/client';
+import { JwtAuthGuard } from '@modules/auth/jwt/jwt-auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly jwtService: JwtService,
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
+    const jwtAuthGuard = new JwtAuthGuard(this.jwtService);
+    const canActivate = jwtAuthGuard.canActivate(context);
+
+    if (!canActivate) {
+      return false;
+    }
+
     const roles = this.reflector.get<UserRole[]>('roles', context.getHandler());
     if (!roles) {
       return true;
