@@ -2,7 +2,14 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../../../prisma/prisma.service';
+import { PrismaService } from '@prismaPath/prisma.service';
+
+import { UserPayload } from './interfaces/user-payload.interface';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LogoutDto } from '@modules/auth/dto/logout.dto';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -22,7 +29,8 @@ export class AuthService {
     return null;
   }
 
-  async login(usernameOrEmail: string, password: string) {
+  async login(loginDto: LoginDto) {
+    const { usernameOrEmail, password } = loginDto;
     const user = await this.validateUser(usernameOrEmail, password);
     if (!user) {
       throw new Error('User not found');
@@ -31,7 +39,11 @@ export class AuthService {
       where: { id: user.id },
       data: { lastLogin: new Date() },
     });
-    const payload = { username: user.username, sub: user.id, role: user.role };
+    const payload: UserPayload = {
+      username: user.username,
+      sub: user.id,
+      role: user.role,
+    };
     const refreshToken = uuidv4();
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
@@ -50,15 +62,22 @@ export class AuthService {
     };
   }
 
-  async register(email: string, password: string, username: string) {
+  async register(registerDto: RegisterDto) {
+    const { email, password, username } = registerDto;
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
     return this.prisma.user.create({
-      data: { email, passwordHash, username },
+      data: {
+        email: email,
+        passwordHash: passwordHash,
+        username: username,
+        profileName: username,
+      },
     });
   }
 
-  async refreshToken(refreshToken: string) {
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    const { refreshToken } = refreshTokenDto;
     const token = await this.prisma.refreshToken.findUnique({
       where: { token: refreshToken },
     });
@@ -90,14 +109,20 @@ export class AuthService {
     if (!user) {
       throw new Error('User not found');
     }
-    const payload = { username: user.username, sub: user.id, role: user.role };
+    const payload: UserPayload = {
+      username: user.username,
+      sub: user.id,
+      role: user.role,
+    };
     return {
       access_token: this.jwtService.sign(payload),
       refresh_token: newRefreshToken,
     };
   }
 
-  async logout(userId: number, refreshToken: string) {
+  async logout(logoutDto: LogoutDto) {
+    const { userId, refreshToken } = logoutDto;
+
     const token = await this.prisma.refreshToken.findUnique({
       where: { token: refreshToken },
     });
