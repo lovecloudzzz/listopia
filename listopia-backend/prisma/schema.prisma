@@ -20,14 +20,6 @@ enum FriendRequestStatus {
   REJECTED
 }
 
-enum CommentType {
-  GAME
-  BOOK
-  MOVIE
-  POST
-  NEWS
-}
-
 enum ContentType {
   BOOK
   MOVIE
@@ -105,7 +97,6 @@ model User {
   receivedRequests FriendRequest[]    @relation("ReceivedRequests")
   CustomCollection CustomCollection[]
   RefreshTokens    RefreshToken[]
-  comments         Comment[]
   Post             Post[]
   News             News[]
   ownedChats       Chat[]             @relation("OwnerChats")
@@ -113,6 +104,11 @@ model User {
   BookListItem     BookListItem[]
   MovieListItem    MovieListItem[]
   GameListItem     GameListItem[]
+  BookComment      BookComment[]
+  MovieComment     MovieComment[]
+  GameComment      GameComment[]
+  PostComment      PostComment[]
+  NewsComment      NewsComment[]
 }
 
 model RefreshToken {
@@ -187,27 +183,6 @@ model ChatParticipant {
   userId Int
 
   @@unique([chatId, userId])
-}
-
-model Comment {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-
-  text        String
-  CommentType CommentType
-
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  book      Book?     @relation(fields: [contentId], references: [id], onDelete: Cascade, map: "Comment_Book_fkey")
-  movie     Movie?    @relation(fields: [contentId], references: [id], onDelete: Cascade, map: "Comment_Movie_fkey")
-  game      Game?     @relation(fields: [contentId], references: [id], onDelete: Cascade, map: "Comment_Game_fkey")
-  post      Post?     @relation(fields: [contentId], references: [id], onDelete: Cascade, map: "Comment_Post_fkey")
-  news      News?     @relation(fields: [contentId], references: [id], onDelete: Cascade, map: "Comment_News_fkey")
-  contentId Int
-  replies   Comment[] @relation("CommentReplies")
-  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
-  parentId  Int?
 }
 
 model Rating {
@@ -376,11 +351,30 @@ model Book {
   BookFranchise BookFranchise[]
   BookCast      BookCast[]
 
-  comments             Comment[]
   BookListItem         BookListItem[]
   CustomCollectionBook CustomCollectionBook[]
   SimilarBooks         SimilarBook[]          @relation("SimilarBooks")
   SimilarToBooks       SimilarBook[]          @relation("SimilarToBooks")
+  BookComment          BookComment[]
+}
+
+model BookComment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  text      String
+
+  user   User         @relation(fields: [userId], references: [id])
+  book   Book?        @relation(fields: [bookId], references: [id], onDelete: Cascade, map: "Comment_Book_fkey")
+  parent BookComment? @relation("CommentReplies", fields: [parentId], references: [id])
+
+  userId   Int
+  bookId   Int
+  parentId Int?
+
+  replies BookComment[] @relation("CommentReplies")
+  Movie   Movie?        @relation(fields: [movieId], references: [id])
+  movieId Int?
 }
 
 model SimilarBook {
@@ -419,11 +413,12 @@ model Movie {
 
   personId Int
 
-  comments              Comment[]
   MovieListItem         MovieListItem[]
   CustomCollectionMovie CustomCollectionMovie[]
   SimilarMovie          SimilarMovie[]          @relation("SimilarMovies")
   SimilarToMovie        SimilarMovie[]          @relation("SimilarToMovies")
+  BookComment           BookComment[]
+  MovieComment          MovieComment[]
 }
 
 model Studio {
@@ -452,6 +447,23 @@ model SimilarMovie {
   targetMovieId Int
 }
 
+model MovieComment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  text      String
+
+  user   User          @relation(fields: [userId], references: [id])
+  movie  Movie?        @relation(fields: [movieId], references: [id], onDelete: Cascade, map: "Comment_Movie_fkey")
+  parent MovieComment? @relation("CommentReplies", fields: [parentId], references: [id])
+
+  userId   Int
+  movieId  Int
+  parentId Int?
+
+  replies MovieComment[] @relation("CommentReplies")
+}
+
 model Game {
   id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now())
@@ -475,11 +487,11 @@ model Game {
   publisherId Int
   developerId Int
 
-  comments             Comment[]
   GameListItem         GameListItem[]
   CustomCollectionGame CustomCollectionGame[]
   SimilarGames         SimilarGame[]          @relation("SimilarGames")
   SimilarToGames       SimilarGame[]          @relation("SimilarToGames")
+  GameComment          GameComment[]
 }
 
 model Developer {
@@ -531,6 +543,23 @@ model SimilarGame {
 
   sourceGameId Int
   targetGameId Int
+}
+
+model GameComment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  text      String
+
+  user   User         @relation(fields: [userId], references: [id])
+  game   Game?        @relation(fields: [gameId], references: [id], onDelete: Cascade, map: "Comment_Game_fkey")
+  parent GameComment? @relation("CommentReplies", fields: [parentId], references: [id])
+
+  userId   Int
+  gameId   Int
+  parentId Int?
+
+  replies GameComment[] @relation("CommentReplies")
 }
 
 model BookListItem {
@@ -690,10 +719,27 @@ model Post {
   text  String
 
   user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  comments   Comment[]
   PostsMedia PostsMedia[]
 
-  userId Int
+  userId      Int
+  PostComment PostComment[]
+}
+
+model PostComment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  text      String
+
+  user   User         @relation(fields: [userId], references: [id])
+  post   Post?        @relation(fields: [postId], references: [id], onDelete: Cascade, map: "Comment_Post_fkey")
+  parent PostComment? @relation("CommentReplies", fields: [parentId], references: [id])
+
+  userId   Int
+  postId   Int
+  parentId Int?
+
+  replies PostComment[] @relation("CommentReplies")
 }
 
 model News {
@@ -706,10 +752,27 @@ model News {
   text  String
 
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  comments  Comment[]
   NewsMedia NewsMedia[]
 
-  userId Int
+  userId      Int
+  NewsComment NewsComment[]
+}
+
+model NewsComment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  text      String
+
+  user   User         @relation(fields: [userId], references: [id])
+  news   News?        @relation(fields: [newsId], references: [id], onDelete: Cascade, map: "Comment_News_fkey")
+  parent NewsComment? @relation("CommentReplies", fields: [parentId], references: [id])
+
+  userId   Int
+  newsId   Int
+  parentId Int?
+
+  replies NewsComment[] @relation("CommentReplies")
 }
 
 model NewsMedia {

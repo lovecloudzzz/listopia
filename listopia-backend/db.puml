@@ -13,14 +13,6 @@ enum FriendRequestStatus {
   REJECTED
 }
 
-enum CommentType {
-  GAME
-  BOOK
-  MOVIE
-  POST
-  NEWS
-}
-
 enum ContentType {
   BOOK
   MOVIE
@@ -127,14 +119,7 @@ class ChatParticipant {
   ChatParticipantRole role
 }
 
-class Comment {
-  Int id
-  Int userId
-  Int mediaId
-  Int? parentId
-  String text
-  CommentType commentType
-}
+
 
 class Rating {
   Int id
@@ -233,6 +218,15 @@ class SimilarBook {
   Int targetBookId
 }
 
+class BookComment {
+  Int id
+  Book book
+  User user
+  String text
+  BookComment parent
+  BookComment[] replies
+}
+
 class Movie {
   Int id
   String title
@@ -263,6 +257,15 @@ class SimilarMovie {
   Int id
   Int sourceMovieId
   Int targetMovieId
+}
+
+class MovieComment {
+  Int id
+  Movie movie
+  User user
+  String text
+  MovieComment parent
+  MovieComment[] replies
 }
 
 class Game {
@@ -311,6 +314,15 @@ class SimilarGame {
   Int id
   Int sourceGameId
   Int targetGameId
+}
+
+class GameComment {
+  Int id
+  Game game
+  User user
+  String text
+  GameComment parent
+  GameComment[] replies
 }
 
 class BookListItem {
@@ -393,12 +405,30 @@ class Post {
   Media[] media
 }
 
+class PostComment {
+  Int id
+  Post post
+  User user
+  String text
+  PostComment parent
+  PostComment[] replies
+}
+
 class News {
   Int id
   Int userId
   String title
   String text
   Media[] media
+}
+
+class NewsComment {
+  Int id
+  News news
+  User user
+  String text
+  NewsComment parent
+  NewsComment[] replies
 }
 
 class NewsMedia {
@@ -421,14 +451,17 @@ User -- RefreshToken
 User -- Message
 User -- FriendRequest
 User -- CustomCollection
-User -- Comment
 User -- Post
 User -- News
 User -- UserRole
 User -- BookListItem
 User -- GameListItem
 User -- MovieListItem
-
+User -- BookComment
+User -- MovieComment
+User -- GameComment
+User -- PostComment
+User -- NewsComment
 
 Chat -- ChatParticipant
 Chat -- Message
@@ -437,13 +470,6 @@ ChatParticipant -- User
 ChatParticipant -- ChatParticipantRole
 
 FriendRequest -- FriendRequestStatus
-
-Comment -- News
-Comment -- Post
-Comment -- Book
-Comment -- Movie
-Comment -- Game
-Comment -- CommentType
 
 Person -- Movie
 Person -- BookCast
@@ -485,6 +511,7 @@ Book -- CustomCollectionBook
 Book -- BookFranchise
 Book -- BookCast
 Book -- SimilarBook
+Book -- BookComment
 
 Movie -- MovieListItem
 Movie -- CustomCollectionMovie
@@ -493,6 +520,7 @@ Movie -- Studio
 Movie -- MovieType
 Movie -- MovieCast
 Movie -- SimilarMovie
+Movie -- MovieComment
 
 Game -- Platform
 Game -- GameListItem
@@ -502,6 +530,7 @@ Game -- Developer
 Game -- Publisher
 Game -- GameCast
 Game -- SimilarGame
+Game -- GameComment
 
 Genre -- Game
 Genre -- Movie
@@ -514,8 +543,10 @@ Theme -- Book
 
 NewsMedia -- News
 NewsMedia -- MediaType
+News -- NewsComment
 
 PostsMedia -- Post
 PostsMedia -- MediaType
+Post -- PostComment
 
 @enduml
