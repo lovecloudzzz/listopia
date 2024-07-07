@@ -3,8 +3,8 @@ import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ThemeService } from '@modules/content/theme/theme.service';
 import { CreateThemeDto } from '@modules/content/theme/dto/createTheme.dto';
 import { UpdateThemeDto } from '@modules/content/theme/dto/updateTheme.dto';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { Roles } from '@common/guards/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 
 @Controller('theme')
 export class ThemeController {

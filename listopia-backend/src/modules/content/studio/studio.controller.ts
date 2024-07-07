@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { StudioService } from './studio.service';
 import { Studio } from '@prisma/client';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { Roles } from '@common/guards/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 import { GetStudiosDto } from '@modules/content/studio/dto/getStudios.dto';
 import { CreateStudioDto } from '@modules/content/studio/dto/createStudio.dto';
 import { UpdateStudioDto } from '@modules/content/studio/dto/updateStudioDto';

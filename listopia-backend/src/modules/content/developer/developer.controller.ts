@@ -13,8 +13,8 @@ import { DeveloperService } from './developer.service';
 import { Developer } from '@prisma/client';
 import { GetDevelopersDto } from '@modules/content/developer/dto/getDevelopers.dto';
 import { CreateDeveloperDto } from '@modules/content/developer/dto/createDeveloper.dto';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { Roles } from '@common/guards/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 import { UpdateDeveloperDto } from '@modules/content/developer/dto/updateDeveloperDto';
 
 @Controller('developer')

@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { PublisherService } from './publisher.service';
 import { Publisher } from '@prisma/client';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { Roles } from '@common/guards/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 import { GetPublishersDto } from '@modules/content/publisher/dto/getPublishers.dto';
 import { CreatePublisherDto } from '@modules/content/publisher/dto/createPublisher.dto';
 import { UpdatePublisherDto } from '@modules/content/publisher/dto/updatePublisherDto';

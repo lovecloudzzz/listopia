@@ -15,8 +15,8 @@ import { UpdatePersonDto } from '@modules/content/person/dto/updatePerson.dto';
 import { Person, PersonCareer } from '@prisma/client';
 import { GetPersonsDto } from '@modules/content/person/dto/getPersons.dto';
 import { GetPersonsByCareerDto } from '@modules/content/person/dto/getPersonsByCareer.dto';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { Roles } from '@common/guards/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 
 @Controller('person')
 export class PersonController {

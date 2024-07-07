@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { GenreService } from './genre.service';
 import { CreateGenreDto } from '@modules/content/genre/dto/createGenre.dto';
-import { RolesGuard } from '@common/guards/roles.guard';
 import { ContentType } from '@prisma/client';
 import { UpdateGenreDto } from '@modules/content/genre/dto/updateGenre.dto';
-import { Roles } from '@common/guards/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 
 @Controller('genre')
 export class GenreController {

@@ -2,8 +2,8 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { UserRole } from '@prisma/client';
-import { JwtAuthGuard } from '@modules/auth/jwt/jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
+import { JwtAuthGuard } from '@common/guards/JWTGuard/jwt-auth.guard';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

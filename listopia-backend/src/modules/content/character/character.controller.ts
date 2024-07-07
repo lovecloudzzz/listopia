@@ -12,8 +12,8 @@ import {
 import { CharacterService } from './character.service';
 import { Character } from '@prisma/client';
 import { GetCharactersDto } from '@modules/content/character/dto/getCharacters.dto';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { Roles } from '@common/guards/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 import { UpdateCharacterDto } from '@modules/content/character/dto/updateCharacter.dto';
 import { CreateCharacterDto } from '@modules/content/character/dto/createCharacter.dto';
 

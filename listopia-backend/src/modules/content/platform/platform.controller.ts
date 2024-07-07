@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { PlatformService } from './platform.service';
 import { Platform } from '@prisma/client';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { Roles } from '@common/guards/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 import { GetPlatformsDto } from '@modules/content/platform/dto/getPlatforms.dto';
 import { CreatePlatformDto } from '@modules/content/platform/dto/createPlatform.dto';
 import { UpdatePlatformDto } from '@modules/content/platform/dto/updatePlatformDto';

@@ -13,8 +13,8 @@ import { FranchiseService } from './franchise.service';
 import { Franchise } from '@prisma/client';
 import { GetFranchisesDto } from '@modules/content/franchise/dto/getFranchises.dto';
 import { CreateFranchiseDto } from '@modules/content/franchise/dto/createFranchise.dto';
-import { RolesGuard } from '@common/guards/roles.guard';
-import { Roles } from '@common/guards/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 import { UpdateFranchiseDto } from '@modules/content/franchise/dto/updateFranchiseDto';
 
 @Controller('franchise')
