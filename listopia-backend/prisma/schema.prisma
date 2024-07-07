@@ -73,11 +73,6 @@ enum ChatParticipantRole {
   Admin
 }
 
-enum JournalType {
-  POST
-  NEWS
-}
-
 enum AgeRating {
   G // подходит для всех возрастов
   PG // некоторый материал может быть не подходящим для детей
@@ -108,8 +103,6 @@ model User {
   receivedMessages Message[]          @relation("ReceivedMessages")
   friendRequests   FriendRequest[]    @relation("FriendRequests")
   receivedRequests FriendRequest[]    @relation("ReceivedRequests")
-  ListItem         ListItem[]
-  CustomListItem   CustomListItem[]
   CustomCollection CustomCollection[]
   RefreshTokens    RefreshToken[]
   comments         Comment[]
@@ -117,6 +110,9 @@ model User {
   News             News[]
   ownedChats       Chat[]             @relation("OwnerChats")
   participantChats ChatParticipant[]
+  BookListItem     BookListItem[]
+  MovieListItem    MovieListItem[]
+  GameListItem     GameListItem[]
 }
 
 model RefreshToken {
@@ -222,7 +218,9 @@ model Rating {
   rating Int // 1-100
   review String @default("")
 
-  ListItem ListItem[]
+  BookListItem  BookListItem[]
+  MovieListItem MovieListItem[]
+  GameListItem  GameListItem[]
 }
 
 model Franchise {
@@ -235,7 +233,9 @@ model Franchise {
   description String?
   logoPath    String?
 
-  FranchiseItem FranchiseItem[]
+  BookFranchise  BookFranchise[]
+  MovieFranchise MovieFranchise[]
+  GameFranchise  GameFranchise[]
 }
 
 model Genre {
@@ -281,7 +281,9 @@ model Person {
   career      PersonCareer[] // Список карьер (актера, режиссера, писателя и т.д.)
   directed    Movie[]        @relation("DirectedMovies")
   books       Book[]         @relation("PersonBooks")
-  casts       Cast[]
+  MovieCast   MovieCast[]
+  BookCast    BookCast[]
+  GameCast    GameCast[]
 }
 
 model Character {
@@ -294,45 +296,66 @@ model Character {
   description String?
   photoPath   String?
 
-  Cast Cast[]
+  MovieCast MovieCast[]
+  BookCast  BookCast[]
+  GameCast  GameCast[]
 }
 
-model Cast {
+model BookCast {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  roleName      String? // для заглушек
-  roleActor     String? // для заглушек
+  roleName      String?
+  roleActor     String?
   rolePhotoPath String?
-  roleType      RoleType    @default(UNKNOWN)
-  contentType   ContentType
+  roleType      RoleType @default(UNKNOWN)
 
-  character   Character? @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  book      Book       @relation(fields: [bookId], references: [id])
+  character Character? @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  actor     Person?    @relation(fields: [actorId], references: [id])
+
+  bookId      Int
   characterId Int?
-  movie       Movie?     @relation(fields: [contentId], references: [id], map: "Cast_Movie_fkey")
-  book        Book?      @relation(fields: [contentId], references: [id], map: "Cast_Book_fkey")
-  game        Game?      @relation(fields: [contentId], references: [id], map: "Cast_Game_fkey")
-  contentId   Int
-  actor       Person?    @relation(fields: [personId], references: [id])
-  personId    Int?
+  actorId     Int?
 }
 
-model SimilarItem {
+model MovieCast {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  contentType ContentType
+  roleName      String?
+  roleActor     String?
+  rolePhotoPath String?
+  roleType      RoleType @default(UNKNOWN)
 
-  sourceBook      Book?  @relation("SimilarBooksSource", fields: [sourceContentId], references: [id], onDelete: Cascade, map: "SimilarItem_SourceBook_fkey")
-  targetBook      Book?  @relation("SimilarBooksTarget", fields: [targetContentId], references: [id], onDelete: Cascade, map: "SimilarItem_TargetBook_fkey")
-  sourceMovie     Movie? @relation("SimilarMoviesSource", fields: [sourceContentId], references: [id], onDelete: Cascade, map: "SimilarItem_SourceMovie_fkey")
-  targetMovie     Movie? @relation("SimilarMoviesTarget", fields: [targetContentId], references: [id], onDelete: Cascade, map: "SimilarItem_TargetMovie_fkey")
-  sourceGame      Game?  @relation("SimilarGamesSource", fields: [sourceContentId], references: [id], onDelete: Cascade, map: "SimilarItem_SourceGame_fkey")
-  targetGame      Game?  @relation("SimilarGamesTarget", fields: [targetContentId], references: [id], onDelete: Cascade, map: "SimilarItem_TargetGame_fkey")
-  sourceContentId Int
-  targetContentId Int
+  movie     Movie      @relation(fields: [movieId], references: [id])
+  character Character? @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  actor     Person?    @relation(fields: [actorId], references: [id])
+
+  movieId     Int
+  characterId Int?
+  actorId     Int?
+}
+
+model GameCast {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  roleName      String?
+  roleActor     String?
+  rolePhotoPath String?
+  roleType      RoleType @default(UNKNOWN)
+
+  game      Game       @relation(fields: [gameId], references: [id])
+  character Character? @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  actor     Person?    @relation(fields: [actorId], references: [id])
+
+  gameId      Int
+  characterId Int?
+  actorId     Int?
 }
 
 model Book {
@@ -341,23 +364,35 @@ model Book {
   updatedAt  DateTime @updatedAt
   visitCount Int      @default(0)
 
-  title       String
-  description String?
-  authors     Person[]        @relation("PersonBooks")
-  release     DateTime
-  posterPath  String?
-  pageCount   Int
-  ageRating   AgeRating       @default(NR)
-  genres      Genre[]
-  themes      Theme[]
-  franchises  FranchiseItem[]
-  Cast        Cast[]
+  title         String
+  description   String?
+  authors       Person[]        @relation("PersonBooks")
+  release       DateTime
+  posterPath    String?
+  pageCount     Int
+  ageRating     AgeRating       @default(NR)
+  genres        Genre[]
+  themes        Theme[]
+  BookFranchise BookFranchise[]
+  BookCast      BookCast[]
 
-  ListItem       ListItem[]
-  CustomListItem CustomListItem[]
-  comments       Comment[]
-  similarItems   SimilarItem[]    @relation("SimilarBooksSource")
-  similarToItems SimilarItem[]    @relation("SimilarBooksTarget")
+  comments             Comment[]
+  BookListItem         BookListItem[]
+  CustomCollectionBook CustomCollectionBook[]
+  SimilarBooks         SimilarBook[]          @relation("SimilarBooks")
+  SimilarToBooks       SimilarBook[]          @relation("SimilarToBooks")
+}
+
+model SimilarBook {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  sourceBook Book @relation("SimilarBooks", fields: [sourceBookId], references: [id], onDelete: Cascade)
+  targetBook Book @relation("SimilarToBooks", fields: [targetBookId], references: [id], onDelete: Cascade)
+
+  sourceBookId Int
+  targetBookId Int
 }
 
 model Movie {
@@ -366,28 +401,29 @@ model Movie {
   updatedAt  DateTime @default(now())
   visitCount Int      @default(0)
 
-  title       String
-  description String?
-  MovieType   MovieType       @default(LIVE_ACTION)
-  posterPath  String?
-  director    Person          @relation("DirectedMovies", fields: [personId], references: [id])
-  release     DateTime
-  duration    Int             @default(0)
-  isSeries    Boolean         @default(false)
-  seriesCount Int             @default(1)
-  ageRating   AgeRating       @default(NR)
-  genres      Genre[]
-  themes      Theme[]
-  franchises  FranchiseItem[]
-  Cast        Cast[]
-  studios     Studio[]        @relation("MovieStudios")
+  title          String
+  description    String?
+  MovieType      MovieType        @default(LIVE_ACTION)
+  posterPath     String?
+  director       Person           @relation("DirectedMovies", fields: [personId], references: [id])
+  release        DateTime
+  duration       Int              @default(0)
+  isSeries       Boolean          @default(false)
+  seriesCount    Int              @default(1)
+  ageRating      AgeRating        @default(NR)
+  genres         Genre[]
+  themes         Theme[]
+  studios        Studio[]         @relation("MovieStudios")
+  MovieFranchise MovieFranchise[]
+  MovieCast      MovieCast[]
 
-  ListItem       ListItem[]
-  CustomListItem CustomListItem[]
-  comments       Comment[]
-  similarItems   SimilarItem[]    @relation("SimilarMoviesSource")
-  similarToItems SimilarItem[]    @relation("SimilarMoviesTarget")
-  personId       Int
+  personId Int
+
+  comments              Comment[]
+  MovieListItem         MovieListItem[]
+  CustomCollectionMovie CustomCollectionMovie[]
+  SimilarMovie          SimilarMovie[]          @relation("SimilarMovies")
+  SimilarToMovie        SimilarMovie[]          @relation("SimilarToMovies")
 }
 
 model Studio {
@@ -404,33 +440,46 @@ model Studio {
   movies Movie[] @relation("MovieStudios")
 }
 
+model SimilarMovie {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  sourceMovie Movie @relation("SimilarMovies", fields: [sourceMovieId], references: [id], onDelete: Cascade)
+  targetMovie Movie @relation("SimilarToMovies", fields: [targetMovieId], references: [id], onDelete: Cascade)
+
+  sourceMovieId Int
+  targetMovieId Int
+}
+
 model Game {
   id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
   visitCount Int      @default(0)
 
-  title       String
-  description String?
-  posterPath  String?
-  developer   Developer       @relation(fields: [developerId], references: [id])
-  duration    Int             @default(0)
-  release     DateTime
-  ageRating   AgeRating       @default(NR)
-  genres      Genre[]
-  themes      Theme[]
-  Cast        Cast[]
-  platforms   Platform[]
-  franchises  FranchiseItem[]
-  publisher   Publisher       @relation(fields: [publisherId], references: [id])
+  title         String
+  description   String?
+  posterPath    String?
+  developer     Developer       @relation(fields: [developerId], references: [id])
+  duration      Int             @default(0)
+  release       DateTime
+  ageRating     AgeRating       @default(NR)
+  genres        Genre[]
+  themes        Theme[]
+  platforms     Platform[]
+  publisher     Publisher       @relation(fields: [publisherId], references: [id])
+  GameFranchise GameFranchise[]
+  GameCast      GameCast[]
 
-  comments       Comment[]
-  ListItem       ListItem[]
-  CustomListItem CustomListItem[]
-  similarItems   SimilarItem[]    @relation("SimilarGamesSource")
-  similarToItems SimilarItem[]    @relation("SimilarGamesTarget")
-  publisherId    Int
-  developerId    Int
+  publisherId Int
+  developerId Int
+
+  comments             Comment[]
+  GameListItem         GameListItem[]
+  CustomCollectionGame CustomCollectionGame[]
+  SimilarGames         SimilarGame[]          @relation("SimilarGames")
+  SimilarToGames       SimilarGame[]          @relation("SimilarToGames")
 }
 
 model Developer {
@@ -472,40 +521,109 @@ model Platform {
   games Game[]
 }
 
-model ListItem {
+model SimilarGame {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  contentType ContentType
-  status      ContentStatus
-  note        String
-  rating      Rating        @relation(fields: [ratingId], references: [id])
-  rewathed    Int           @default(0)
-  current     Int // Серия/час прохождения/страница
+  sourceGame Game @relation("SimilarGames", fields: [sourceGameId], references: [id], onDelete: Cascade)
+  targetGame Game @relation("SimilarToGames", fields: [targetGameId], references: [id], onDelete: Cascade)
 
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  book      Book?  @relation(fields: [contentId], references: [id], map: "ListItem_Book_fkey")
-  movie     Movie? @relation(fields: [contentId], references: [id], map: "ListItem_Movie_fkey")
-  game      Game?  @relation(fields: [contentId], references: [id], map: "ListItem_Game_fkey")
-  userId    Int
-  contentId Int
-  ratingId  Int
+  sourceGameId Int
+  targetGameId Int
 }
 
-model FranchiseItem {
+model BookListItem {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 
-  contentType ContentType
+  status   ContentStatus
+  note     String
+  rewathed Int           @default(0)
+  current  Int // страница
 
-  book        Book?     @relation(fields: [contentId], references: [id], onDelete: Cascade, map: "FranchiseItem_Book_fkey")
-  movie       Movie?    @relation(fields: [contentId], references: [id], onDelete: Cascade, map: "FranchiseItem_Movie_fkey")
-  game        Game?     @relation(fields: [contentId], references: [id], onDelete: Cascade, map: "FranchiseItem_Game_fkey")
-  contentId   Int
-  franchise   Franchise @relation(fields: [franchiseId], references: [id], onDelete: Cascade)
+  rating Rating @relation(fields: [ratingId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book   Book   @relation(fields: [bookId], references: [id])
+
+  userId   Int
+  bookId   Int
+  ratingId Int
+}
+
+model MovieListItem {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  status   ContentStatus
+  note     String
+  rewathed Int           @default(0)
+  current  Int // серия
+
+  rating Rating @relation(fields: [ratingId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movie  Movie  @relation(fields: [movieId], references: [id])
+
+  userId   Int
+  movieId  Int
+  ratingId Int
+}
+
+model GameListItem {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  status   ContentStatus
+  note     String
+  rewathed Int           @default(0)
+  current  Int // часов прохождения
+
+  rating Rating @relation(fields: [ratingId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game   Game   @relation(fields: [gameId], references: [id])
+
+  userId   Int
+  gameId   Int
+  ratingId Int
+}
+
+model BookFranchise {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  franchise Franchise @relation(fields: [franchiseId], references: [id], onDelete: Cascade)
+  book      Book      @relation(fields: [bookId], references: [id])
+
   franchiseId Int
+  bookId      Int
+}
+
+model MovieFranchise {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  franchise Franchise @relation(fields: [franchiseId], references: [id], onDelete: Cascade)
+  movie     Movie     @relation(fields: [movieId], references: [id])
+
+  franchiseId Int
+  movieId     Int
+}
+
+model GameFranchise {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  franchise Franchise @relation(fields: [franchiseId], references: [id], onDelete: Cascade)
+  game      Game      @relation(fields: [gameId], references: [id])
+
+  franchiseId Int
+  gameId      Int
 }
 
 model CustomCollection {
@@ -517,28 +635,49 @@ model CustomCollection {
   posterPath  String?
   name        String
   description String?
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         Int
-  CustomListItem CustomListItem[]
+  userId Int
+
+  books  CustomCollectionBook[]
+  movies CustomCollectionMovie[]
+  games  CustomCollectionGame[]
 }
 
-model CustomListItem {
+model CustomCollectionBook {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  contentType ContentType
-  status      ContentStatus
+  customCollection CustomCollection @relation(fields: [customCollectionId], references: [id], onDelete: Cascade)
+  book             Book             @relation(fields: [bookId], references: [id])
+
+  customCollectionId Int
+  bookId             Int
+}
+
+model CustomCollectionMovie {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   customCollection   CustomCollection @relation(fields: [customCollectionId], references: [id], onDelete: Cascade)
   customCollectionId Int
-  book               Book?            @relation(fields: [contentId], references: [id], map: "CustomListItem_Book_fkey")
-  movie              Movie?           @relation(fields: [contentId], references: [id], map: "CustomListItem_Movie_fkey")
-  game               Game?            @relation(fields: [contentId], references: [id], map: "CustomListItem_Game_fkey")
-  contentId          Int
-  User               User?            @relation(fields: [userId], references: [id])
-  userId             Int?
+
+  movie   Movie @relation(fields: [movieId], references: [id])
+  movieId Int
+}
+
+model CustomCollectionGame {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  customCollection CustomCollection @relation(fields: [customCollectionId], references: [id], onDelete: Cascade)
+  game             Game             @relation(fields: [gameId], references: [id])
+
+  gameId             Int
+  customCollectionId Int
 }
 
 model Post {
@@ -550,10 +689,11 @@ model Post {
   title String
   text  String
 
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   Int
-  comments Comment[]
-  media    Media[]
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments   Comment[]
+  PostsMedia PostsMedia[]
+
+  userId Int
 }
 
 model News {
@@ -565,24 +705,37 @@ model News {
   title String
   text  String
 
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   Int
-  comments Comment[]
-  media    Media[]
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments  Comment[]
+  NewsMedia NewsMedia[]
+
+  userId Int
 }
 
-model Media {
+model NewsMedia {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  mediaPath   String
-  mediaType   MediaType
-  position    Int
-  journalType JournalType
+  mediaPath String
+  mediaType MediaType
+  position  Int
+  news      News?     @relation(fields: [newsId], references: [id], onDelete: Cascade, map: "News_Media")
 
-  post      Post? @relation(fields: [journalId], references: [id], onDelete: Cascade, map: "Post_Media")
-  news      News? @relation(fields: [journalId], references: [id], onDelete: Cascade, map: "News_Media")
-  journalId Int
+  newsId Int
+  // Придумать как определять место в тексте новости/поста
+}
+
+model PostsMedia {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  mediaPath String
+  mediaType MediaType
+  position  Int
+  post      Post?     @relation(fields: [postId], references: [id], onDelete: Cascade, map: "Posts_Media")
+
+  postId Int
   // Придумать как определять место в тексте новости/поста
 }
