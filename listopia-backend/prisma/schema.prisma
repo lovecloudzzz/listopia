@@ -93,7 +93,7 @@ model User {
   updatedAt    DateTime @updatedAt
   lastLogin    DateTime @default(now())
   lastActivity DateTime @default(now())
-  active       Boolean  @default(false)
+  active       Boolean  @default(true)
 
   email        String   @unique
   passwordHash String

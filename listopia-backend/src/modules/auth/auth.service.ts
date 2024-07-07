@@ -9,6 +9,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { LogoutDto } from '@modules/auth/dto/logout.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(usernameOrEmail: string, password: string): Promise<any> {
+  async validateUser(usernameOrEmail: string, password: string): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
@@ -43,6 +44,8 @@ export class AuthService {
       username: user.username,
       sub: user.id,
       role: user.role,
+      ...(user.avatarPath && { avatar: user.avatarPath }),
+      ...(user.profileName && { profileName: user.profileName }),
     };
     const refreshToken = uuidv4();
     const expiresAt = new Date();
@@ -64,9 +67,14 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     const { email, password, username } = registerDto;
+    if (!email || !password || !username) {
+      throw new Error('All fields are required');
+    }
+
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
-    return this.prisma.user.create({
+
+    await this.prisma.user.create({
       data: {
         email: email,
         passwordHash: passwordHash,
@@ -74,6 +82,8 @@ export class AuthService {
         profileName: username,
       },
     });
+    const loginDto: LoginDto = { usernameOrEmail: email, password: password };
+    return this.login(loginDto);
   }
 
   async refreshToken(refreshTokenDto: RefreshTokenDto) {
