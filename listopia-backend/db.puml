@@ -94,11 +94,19 @@ class FriendRequest {
   FriendRequestStatus status
 }
 
-class Message {
+class DirectMessage {
   Int id
   Int senderId
   Int receiverId
-  String content
+  String text
+  Message parent
+}
+
+class ChatMessage {
+  Int id
+  Int senderId
+  Int chatId
+  String text
   Message parent
 }
 
@@ -436,7 +444,6 @@ class NewsMedia {
   Int newsId
   String mediaPath
   MediaType mediaType
-  Int position
 }
 
 class PostsMedia {
@@ -444,11 +451,10 @@ class PostsMedia {
   Int postId
   String mediaPath
   MediaType mediaType
-  Int position
 }
 
 User -- RefreshToken
-User -- Message
+User -- DirectMessage
 User -- FriendRequest
 User -- CustomCollection
 User -- Post
@@ -462,9 +468,10 @@ User -- MovieComment
 User -- GameComment
 User -- PostComment
 User -- NewsComment
+User -- ChatMessage
 
 Chat -- ChatParticipant
-Chat -- Message
+Chat -- ChatMessage
 
 ChatParticipant -- User
 ChatParticipant -- ChatParticipantRole

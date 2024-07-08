@@ -89,26 +89,27 @@ model User {
   profileName  String
   role         UserRole @default(Standard)
 
-  friends          User[]             @relation("Friendship")
-  friendOf         User[]             @relation("Friendship")
-  sentMessages     Message[]          @relation("SentMessages")
-  receivedMessages Message[]          @relation("ReceivedMessages")
-  friendRequests   FriendRequest[]    @relation("FriendRequests")
-  receivedRequests FriendRequest[]    @relation("ReceivedRequests")
-  CustomCollection CustomCollection[]
-  RefreshTokens    RefreshToken[]
-  Post             Post[]
-  News             News[]
-  ownedChats       Chat[]             @relation("OwnerChats")
-  participantChats ChatParticipant[]
-  BookListItem     BookListItem[]
-  MovieListItem    MovieListItem[]
-  GameListItem     GameListItem[]
-  BookComment      BookComment[]
-  MovieComment     MovieComment[]
-  GameComment      GameComment[]
-  PostComment      PostComment[]
-  NewsComment      NewsComment[]
+  friends                User[]             @relation("Friendship")
+  friendOf               User[]             @relation("Friendship")
+  friendRequests         FriendRequest[]    @relation("FriendRequests")
+  receivedRequests       FriendRequest[]    @relation("ReceivedRequests")
+  CustomCollection       CustomCollection[]
+  RefreshTokens          RefreshToken[]
+  Post                   Post[]
+  News                   News[]
+  ownedChats             Chat[]             @relation("OwnerChats")
+  participantChats       ChatParticipant[]
+  BookListItem           BookListItem[]
+  MovieListItem          MovieListItem[]
+  GameListItem           GameListItem[]
+  BookComment            BookComment[]
+  MovieComment           MovieComment[]
+  GameComment            GameComment[]
+  PostComment            PostComment[]
+  NewsComment            NewsComment[]
+  sentDirectMessages     DirectMessage[]    @relation("SentDirectMessages")
+  receivedDirectMessages DirectMessage[]    @relation("ReceivedDirectMessages")
+  sentChatMessages       ChatMessage[]      @relation("SentChatMessages")
 }
 
 model RefreshToken {
@@ -136,22 +137,38 @@ model FriendRequest {
   receiverId Int
 }
 
-model Message {
+model DirectMessage {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
-  content   String
-  parent    Message? @relation("MessageReplies", fields: [messageId], references: [id])
-  messageId Int?
+  text     String
+  sender   User           @relation("SentDirectMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User           @relation("ReceivedDirectMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  parent   DirectMessage? @relation("MessageReplies", fields: [parentId], references: [id])
 
-  sender     User      @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
   senderId   Int
-  receiver   User?     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
-  receiverId Int?
-  chatId     Int?
-  chat       Chat?     @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  replies    Message[] @relation("MessageReplies")
+  receiverId Int
+  parentId   Int?
+
+  replies DirectMessage[] @relation("MessageReplies")
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  text   String
+  sender User         @relation("SentChatMessages", fields: [senderId], references: [id])
+  chat   Chat         @relation(fields: [chatId], references: [id])
+  parent ChatMessage? @relation("MessageReplies", fields: [parentId], references: [id])
+
+  senderId Int
+  chatId   Int
+  parentId Int
+
+  replies ChatMessage[] @relation("MessageReplies")
 }
 
 model Chat {
@@ -162,11 +179,12 @@ model Chat {
   title       String @default("Chat")
   description String @default("")
   posterPath  String @default("")
+  owner       User   @relation("OwnerChats", fields: [ownerId], references: [id])
 
-  owner        User              @relation("OwnerChats", fields: [ownerId], references: [id])
-  ownerId      Int
+  ownerId Int
+
   participants ChatParticipant[]
-  messages     Message[]
+  ChatMessage  ChatMessage[]
 }
 
 model ChatParticipant {
@@ -782,11 +800,9 @@ model NewsMedia {
 
   mediaPath String
   mediaType MediaType
-  position  Int
   news      News?     @relation(fields: [newsId], references: [id], onDelete: Cascade, map: "News_Media")
 
   newsId Int
-  // Придумать как определять место в тексте новости/поста
 }
 
 model PostsMedia {
@@ -796,9 +812,7 @@ model PostsMedia {
 
   mediaPath String
   mediaType MediaType
-  position  Int
   post      Post?     @relation(fields: [postId], references: [id], onDelete: Cascade, map: "Posts_Media")
 
   postId Int
-  // Придумать как определять место в тексте новости/поста
 }
