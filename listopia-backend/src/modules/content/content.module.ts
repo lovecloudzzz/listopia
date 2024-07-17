@@ -9,6 +9,8 @@ import { CastModule } from './cast/cast.module';
 import { StudioModule } from './studio/studio.module';
 import { PlatformModule } from './platform/platform.module';
 import { FranchiseModule } from './franchise/franchise.module';
+import { BookModule } from './book/book.module';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { FranchiseModule } from './franchise/franchise.module';
     StudioModule,
     PlatformModule,
     FranchiseModule,
+    BookModule,
+    GameModule,
   ],
 })
 export class ContentModule {}
