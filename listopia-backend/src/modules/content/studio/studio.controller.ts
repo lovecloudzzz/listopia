@@ -1,3 +1,8 @@
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { CreateStudioType } from '@modules/content/studio/types/createStudio.type';
+import type { GetStudiosType } from '@modules/content/studio/types/getStudios.type';
+import type { UpdateStudioTypeWithoutId } from '@modules/content/studio/types/updateStudio.type';
 import {
   Body,
   Controller,
@@ -9,13 +14,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { StudioService } from './studio.service';
 import { Studio } from '@prisma/client';
-import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
-import { GetStudiosDto } from '@modules/content/studio/dto/getStudios.dto';
-import { CreateStudioDto } from '@modules/content/studio/dto/createStudio.dto';
-import { UpdateStudioDto } from '@modules/content/studio/dto/updateStudioDto';
+import { StudioService } from './studio.service';
 
 @Controller('studio')
 export class StudioController {
@@ -27,7 +27,7 @@ export class StudioController {
   }
 
   @Get()
-  async getStudios(@Query() getStudiosDto: GetStudiosDto): Promise<Studio[]> {
+  async getStudios(@Query() getStudiosDto: GetStudiosType): Promise<Studio[]> {
     return this.studioService.getStudios(getStudiosDto);
   }
 
@@ -35,7 +35,7 @@ export class StudioController {
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createStudio(
-    @Body() createStudioDto: CreateStudioDto,
+    @Body() createStudioDto: CreateStudioType,
   ): Promise<Studio> {
     return this.studioService.createStudio(createStudioDto);
   }
@@ -44,9 +44,10 @@ export class StudioController {
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updateStudio(
-    @Body() updateStudioDto: UpdateStudioDto,
+    @Body() updateStudioDto: UpdateStudioTypeWithoutId,
+    @Param('id') id: number,
   ): Promise<Studio> {
-    return this.studioService.updateStudio(updateStudioDto);
+    return this.studioService.updateStudio({ ...updateStudioDto, id: id });
   }
 
   @UseGuards(RolesGuard)

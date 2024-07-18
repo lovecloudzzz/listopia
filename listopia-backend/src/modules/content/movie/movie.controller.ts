@@ -1,8 +1,8 @@
 import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { CreateMovieDto } from '@modules/content/movie/dto/createMovie.dto';
-import { GetMoviesDto } from '@modules/content/movie/dto/getMovies.dto';
-import { UpdateMovieDto } from '@modules/content/movie/dto/updateMovie.dto';
+import type { CreateMovieType } from '@modules/content/movie/types/createMovie.type';
+import type { GetMoviesType } from '@modules/content/movie/types/getMovies.type';
+import type { UpdateMovieTypeWithoutId } from '@modules/content/movie/types/updateMovie.type';
 import {
   Body,
   Controller,
@@ -27,22 +27,25 @@ export class MovieController {
   }
 
   @Get()
-  async getMovies(@Query() getMoviesDto: GetMoviesDto): Promise<Movie[]> {
+  async getMovies(@Query() getMoviesDto: GetMoviesType): Promise<Movie[]> {
     return this.movieService.getMovies(getMoviesDto);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
-  async createMovie(@Body() createMovieDto: CreateMovieDto): Promise<Movie> {
+  async createMovie(@Body() createMovieDto: CreateMovieType): Promise<Movie> {
     return this.movieService.createMovie(createMovieDto);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Put()
-  async updateMovie(@Body() updatePersonDto: UpdateMovieDto): Promise<Movie> {
-    return this.movieService.updateMovie(updatePersonDto);
+  @Put('id')
+  async updateMovie(
+    @Body() updatePersonDto: UpdateMovieTypeWithoutId,
+    @Param('id') id: number,
+  ): Promise<Movie> {
+    return this.movieService.updateMovie({ ...updatePersonDto, id: id });
   }
 
   @UseGuards(RolesGuard)

@@ -1,3 +1,9 @@
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { CreatePersonType } from '@modules/content/person/types/createPerson.type';
+import type { GetPersonsType } from '@modules/content/person/types/getPersons.type';
+import type { GetPersonsByCareerType } from '@modules/content/person/types/getPersonsByCareer.type';
+import type { UpdatePersonTypeWithoutId } from '@modules/content/person/types/updatePerson.type';
 import {
   Body,
   Controller,
@@ -9,14 +15,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PersonService } from './person.service';
-import { CreatePersonDto } from '@modules/content/person/dto/createPerson.dto';
-import { UpdatePersonDto } from '@modules/content/person/dto/updatePerson.dto';
 import { Person, PersonCareer } from '@prisma/client';
-import { GetPersonsDto } from '@modules/content/person/dto/getPersons.dto';
-import { GetPersonsByCareerDto } from '@modules/content/person/dto/getPersonsByCareer.dto';
-import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { PersonService } from './person.service';
 
 @Controller('person')
 export class PersonController {
@@ -28,14 +28,14 @@ export class PersonController {
   }
 
   @Get()
-  async getPersons(@Query() getPersonsDto: GetPersonsDto): Promise<Person[]> {
+  async getPersons(@Query() getPersonsDto: GetPersonsType): Promise<Person[]> {
     return this.personService.getPersons(getPersonsDto);
   }
 
   @Get('career/:career')
   async getPersonsByCareer(
     @Param('career') career: PersonCareer,
-    @Query() getPersonsByCareerDto: GetPersonsByCareerDto,
+    @Query() getPersonsByCareerDto: GetPersonsByCareerType,
   ): Promise<Person[]> {
     return this.personService.getPersonsByCareer({
       ...getPersonsByCareerDto,
@@ -47,18 +47,19 @@ export class PersonController {
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createPerson(
-    @Body() createPersonDto: CreatePersonDto,
+    @Body() createPersonDto: CreatePersonType,
   ): Promise<Person> {
     return this.personService.createPerson(createPersonDto);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Put()
+  @Put('id')
   async updatePerson(
-    @Body() updatePersonDto: UpdatePersonDto,
+    @Body() updatePersonDto: UpdatePersonTypeWithoutId,
+    @Param('id') id: number,
   ): Promise<Person> {
-    return this.personService.updatePerson(updatePersonDto);
+    return this.personService.updatePerson({ ...updatePersonDto, id: id });
   }
 
   @UseGuards(RolesGuard)

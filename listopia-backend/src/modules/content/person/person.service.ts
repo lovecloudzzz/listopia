@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prismaPath/prisma.service';
-import { CreatePersonDto } from '@modules/content/person/dto/createPerson.dto';
 import { FileUtil } from '@common/utils/file.util';
-import { UpdatePersonDto } from '@modules/content/person/dto/updatePerson.dto';
+import type { CreatePersonType } from '@modules/content/person/types/createPerson.type';
+import type { GetPersonsType } from '@modules/content/person/types/getPersons.type';
+import type { GetPersonsByCareerType } from '@modules/content/person/types/getPersonsByCareer.type';
+import type { UpdatePersonType } from '@modules/content/person/types/updatePerson.type';
+import { Injectable } from '@nestjs/common';
 import { Person, Prisma } from '@prisma/client';
-import { GetPersonsDto } from '@modules/content/person/dto/getPersons.dto';
-import { GetPersonsByCareerDto } from '@modules/content/person/dto/getPersonsByCareer.dto';
+import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
 export class PersonService {
@@ -31,7 +31,7 @@ export class PersonService {
     return existingPerson;
   }
 
-  async getPersons(getPersonsDto: GetPersonsDto): Promise<Person[]> {
+  async getPersons(getPersonsDto: GetPersonsType): Promise<Person[]> {
     const { page, pageSize, sortField, sortOrder } = getPersonsDto;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -52,7 +52,7 @@ export class PersonService {
   }
 
   async getPersonsByCareer(
-    getPersonsByCareerDto: GetPersonsByCareerDto,
+    getPersonsByCareerDto: GetPersonsByCareerType,
   ): Promise<Person[]> {
     const { career, page, pageSize, sortField, sortOrder } =
       getPersonsByCareerDto;
@@ -72,7 +72,7 @@ export class PersonService {
     });
   }
 
-  async createPerson(createPersonDto: CreatePersonDto): Promise<Person> {
+  async createPerson(createPersonDto: CreatePersonType): Promise<Person> {
     const { name, description, photo, birthday, career } = createPersonDto;
 
     let photoPath = '';
@@ -95,7 +95,7 @@ export class PersonService {
     });
   }
 
-  async updatePerson(updatePersonDto: UpdatePersonDto): Promise<Person> {
+  async updatePerson(updatePersonDto: UpdatePersonType): Promise<Person> {
     const { id, name, description, photo, birthday, career } = updatePersonDto;
 
     const existingPerson = await this.prisma.person.findUnique({

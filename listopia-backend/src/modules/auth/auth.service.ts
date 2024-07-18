@@ -1,15 +1,14 @@
+import type { LoginType } from '@modules/auth/types/login.type';
+import type { LogoutType } from '@modules/auth/types/logout.type';
+import type { RefreshTokenType } from '@modules/auth/types/refresh-token.type';
+import type { RegisterType } from '@modules/auth/types/register.type';
+import type { UserPayload } from '@modules/auth/types/user-payload.type';
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+import { PrismaService } from '@prismaPath/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '@prismaPath/prisma.service';
-
-import { UserPayload } from './interfaces/user-payload.interface';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
-import { LogoutDto } from '@modules/auth/dto/logout.dto';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +29,7 @@ export class AuthService {
     return null;
   }
 
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginType) {
     const { usernameOrEmail, password } = loginDto;
     const user = await this.validateUser(usernameOrEmail, password);
     if (!user) {
@@ -65,7 +64,7 @@ export class AuthService {
     };
   }
 
-  async register(registerDto: RegisterDto) {
+  async register(registerDto: RegisterType) {
     const { email, password, username } = registerDto;
     if (!email || !password || !username) {
       throw new Error('All fields are required');
@@ -82,11 +81,11 @@ export class AuthService {
         profileName: username,
       },
     });
-    const loginDto: LoginDto = { usernameOrEmail: email, password: password };
+    const loginDto: LoginType = { usernameOrEmail: email, password: password };
     return this.login(loginDto);
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+  async refreshToken(refreshTokenDto: RefreshTokenType) {
     const { refreshToken } = refreshTokenDto;
     const token = await this.prisma.refreshToken.findUnique({
       where: { token: refreshToken },
@@ -130,7 +129,7 @@ export class AuthService {
     };
   }
 
-  async logout(logoutDto: LogoutDto) {
+  async logout(logoutDto: LogoutType) {
     const { userId, refreshToken } = logoutDto;
 
     const token = await this.prisma.refreshToken.findUnique({

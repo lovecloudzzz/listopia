@@ -1,20 +1,23 @@
 import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { CreateCastDto } from '@modules/content/cast/dto/createCast.dto';
-import { DeleteCastDto } from '@modules/content/cast/dto/deleteCast.dto';
-import { GetCastDto } from '@modules/content/cast/dto/getCast.dto';
-import { UpdateCastDto } from '@modules/content/cast/dto/updateCast.dto';
+import type { CreateCastType } from '@modules/content/cast/types/createCast.type';
+import type { GetCastType } from '@modules/content/cast/types/getCast.type';
+import type {
+  UpdateCastDtoWithoutId,
+  UpdateCastType,
+} from '@modules/content/cast/types/updateCast.type';
 import {
   Body,
   Controller,
   Delete,
   Get,
+  Param,
   Post,
   Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BookCast, GameCast, MovieCast } from '@prisma/client';
+import { BookCast, ContentType, GameCast, MovieCast } from '@prisma/client';
 import { CastService } from './cast.service';
 
 @Controller('casts')
@@ -23,7 +26,7 @@ export class CastController {
 
   @Get()
   async getCast(
-    @Query() getCastDto: GetCastDto,
+    @Query() getCastDto: GetCastType,
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
     return this.castService.getCast(getCastDto);
   }
@@ -32,7 +35,7 @@ export class CastController {
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createCast(
-    @Body() createCastDto: CreateCastDto,
+    @Body() createCastDto: CreateCastType,
   ): Promise<BookCast | MovieCast | GameCast> {
     return this.castService.createCast(createCastDto);
   }
@@ -41,35 +44,37 @@ export class CastController {
   @Roles('Admin', 'Developer', 'Editor')
   @Post('array')
   async createCastByArray(
-    @Body() createCastDtos: CreateCastDto[],
+    @Body() createCastDtos: CreateCastType[],
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
     return this.castService.createCastByArray(createCastDtos);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Put()
+  @Put(':id')
   async updateCast(
-    @Body() updateCastDto: UpdateCastDto,
+    @Body() updateCastDto: UpdateCastDtoWithoutId,
+    @Param('id') id: number,
   ): Promise<BookCast | MovieCast | GameCast> {
-    return this.castService.updateCast(updateCastDto);
+    return this.castService.updateCast({ ...updateCastDto, id: id });
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put('array')
   async updateCastByArray(
-    @Body() updateCastDtos: UpdateCastDto[],
+    @Body() updateCastDtos: UpdateCastType[],
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
     return this.castService.updateCastByArray(updateCastDtos);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Delete()
+  @Delete(':contentType/:id')
   async deleteCast(
-    @Body() deleteCastDto: DeleteCastDto,
+    @Param('id') id: number,
+    @Param('contentType') contentType: ContentType,
   ): Promise<BookCast | MovieCast | GameCast> {
-    return this.castService.deleteCast(deleteCastDto);
+    return this.castService.deleteCast({ id: id, contentType: contentType });
   }
 }

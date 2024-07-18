@@ -3,13 +3,16 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import * as process from 'node:process';
+import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(private readonly jwtService: JwtService) {
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {
     super();
   }
 
@@ -21,9 +24,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
 
     try {
-      request.user = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET,
-      });
+      const secret = this.configService.get<string>('JWT_SECRET');
+      request.user = this.jwtService.verify(token, { secret });
       return true;
     } catch (error) {
       throw new UnauthorizedException('Invalid authorization token');

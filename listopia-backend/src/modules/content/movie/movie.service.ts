@@ -1,8 +1,8 @@
 import { FileUtil } from '@common/utils/file.util';
 import { CastService } from '@modules/content/cast/cast.service';
-import { CreateMovieDto } from '@modules/content/movie/dto/createMovie.dto';
-import { GetMoviesDto } from '@modules/content/movie/dto/getMovies.dto';
-import { UpdateMovieDto } from '@modules/content/movie/dto/updateMovie.dto';
+import type { CreateMovieType } from '@modules/content/movie/types/createMovie.type';
+import type { GetMoviesType } from '@modules/content/movie/types/getMovies.type';
+import type { UpdateMovieType } from '@modules/content/movie/types/updateMovie.type';
 import { Injectable } from '@nestjs/common';
 import { Movie, Prisma } from '@prisma/client';
 import { PrismaService } from '@prismaPath/prisma.service';
@@ -25,8 +25,9 @@ export class MovieService {
     return existingMovie;
   }
 
-  async getMovies(getMoviesDto: GetMoviesDto): Promise<Movie[]> {
-    const { page, pageSize, sortField, sortOrder } = getMoviesDto;
+  async getMovies(getMoviesDto: GetMoviesType): Promise<Movie[]> {
+    const { page, pageSize, sortField, sortOrder, genreIds, themeIds } =
+      getMoviesDto;
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -43,10 +44,16 @@ export class MovieService {
       skip,
       take,
       orderBy,
+      where: {
+        AND: [
+          genreIds ? { genres: { some: { id: { in: genreIds } } } } : undefined,
+          themeIds ? { themes: { some: { id: { in: themeIds } } } } : undefined,
+        ],
+      },
     });
   }
 
-  async createMovie(createMovieDto: CreateMovieDto): Promise<Movie> {
+  async createMovie(createMovieDto: CreateMovieType): Promise<Movie> {
     const {
       title,
       description,
@@ -113,7 +120,7 @@ export class MovieService {
     return movie;
   }
 
-  async updateMovie(updateMovieDto: UpdateMovieDto): Promise<Movie> {
+  async updateMovie(updateMovieDto: UpdateMovieType): Promise<Movie> {
     const {
       id,
       title,

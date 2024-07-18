@@ -1,3 +1,8 @@
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { CreateFranchiseType } from '@modules/content/franchise/types/createFranchise.type';
+import type { GetFranchisesType } from '@modules/content/franchise/types/getFranchises.type';
+import type { UpdateFranchiseTypeWithoutId } from '@modules/content/franchise/types/updateFranchise.type';
 import {
   Body,
   Controller,
@@ -9,13 +14,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { FranchiseService } from './franchise.service';
 import { Franchise } from '@prisma/client';
-import { GetFranchisesDto } from '@modules/content/franchise/dto/getFranchises.dto';
-import { CreateFranchiseDto } from '@modules/content/franchise/dto/createFranchise.dto';
-import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
-import { UpdateFranchiseDto } from '@modules/content/franchise/dto/updateFranchiseDto';
+import { FranchiseService } from './franchise.service';
 
 @Controller('franchise')
 export class FranchiseController {
@@ -28,7 +28,7 @@ export class FranchiseController {
 
   @Get()
   async getFranchises(
-    @Query() getFranchisesDto: GetFranchisesDto,
+    @Query() getFranchisesDto: GetFranchisesType,
   ): Promise<Franchise[]> {
     return this.franchiseService.getFranchises(getFranchisesDto);
   }
@@ -37,7 +37,7 @@ export class FranchiseController {
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createFranchise(
-    @Body() createFranchiseDto: CreateFranchiseDto,
+    @Body() createFranchiseDto: CreateFranchiseType,
   ): Promise<Franchise> {
     return this.franchiseService.createFranchise(createFranchiseDto);
   }
@@ -46,9 +46,13 @@ export class FranchiseController {
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updateFranchise(
-    @Body() updateFranchiseDto: UpdateFranchiseDto,
+    @Body() updateFranchiseDto: UpdateFranchiseTypeWithoutId,
+    @Param('id') id: number,
   ): Promise<Franchise> {
-    return this.franchiseService.updateFranchise(updateFranchiseDto);
+    return this.franchiseService.updateFranchise({
+      ...updateFranchiseDto,
+      id: id,
+    });
   }
 
   @UseGuards(RolesGuard)

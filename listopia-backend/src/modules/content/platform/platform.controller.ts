@@ -1,3 +1,8 @@
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { CreatePlatformType } from '@modules/content/platform/types/createPlatform.type';
+import type { GetPlatformsType } from '@modules/content/platform/types/getPlatforms.type';
+import type { UpdatePlatformTypeWithoutId } from '@modules/content/platform/types/updatePlatform.type';
 import {
   Body,
   Controller,
@@ -9,13 +14,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PlatformService } from './platform.service';
 import { Platform } from '@prisma/client';
-import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
-import { GetPlatformsDto } from '@modules/content/platform/dto/getPlatforms.dto';
-import { CreatePlatformDto } from '@modules/content/platform/dto/createPlatform.dto';
-import { UpdatePlatformDto } from '@modules/content/platform/dto/updatePlatformDto';
+import { PlatformService } from './platform.service';
 
 @Controller('platform')
 export class PlatformController {
@@ -28,7 +28,7 @@ export class PlatformController {
 
   @Get()
   async getPlatforms(
-    @Query() getPlatformsDto: GetPlatformsDto,
+    @Query() getPlatformsDto: GetPlatformsType,
   ): Promise<Platform[]> {
     return this.platformService.getPlatforms(getPlatformsDto);
   }
@@ -37,7 +37,7 @@ export class PlatformController {
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createPlatform(
-    @Body() createPlatformDto: CreatePlatformDto,
+    @Body() createPlatformDto: CreatePlatformType,
   ): Promise<Platform> {
     return this.platformService.createPlatform(createPlatformDto);
   }
@@ -46,9 +46,13 @@ export class PlatformController {
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updatePlatform(
-    @Body() updatePlatformDto: UpdatePlatformDto,
+    @Body() updatePlatformDto: UpdatePlatformTypeWithoutId,
+    @Param('id') id: number,
   ): Promise<Platform> {
-    return this.platformService.updatePlatform(updatePlatformDto);
+    return this.platformService.updatePlatform({
+      ...updatePlatformDto,
+      id: id,
+    });
   }
 
   @UseGuards(RolesGuard)

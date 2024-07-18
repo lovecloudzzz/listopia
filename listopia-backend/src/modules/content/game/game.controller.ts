@@ -1,8 +1,8 @@
 import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { CreateGameDto } from '@modules/content/game/dto/createGame.dto';
-import { GetGamesDto } from '@modules/content/game/dto/getGames.dto';
-import { UpdateGameDto } from '@modules/content/game/dto/updateGame.dto';
+import type { CreateGameType } from '@modules/content/game/types/createGame.type';
+import type { GetGamesType } from '@modules/content/game/types/getGames.type';
+import type { UpdateGameTypeWithoutId } from '@modules/content/game/types/updateGame.type';
 import {
   Body,
   Controller,
@@ -27,22 +27,25 @@ export class GameController {
   }
 
   @Get()
-  async getGames(@Query() getGamesDto: GetGamesDto): Promise<Game[]> {
+  async getGames(@Query() getGamesDto: GetGamesType): Promise<Game[]> {
     return this.gameService.getGames(getGamesDto);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
-  async createGame(@Body() createGameDto: CreateGameDto): Promise<Game> {
+  async createGame(@Body() createGameDto: CreateGameType): Promise<Game> {
     return this.gameService.createGame(createGameDto);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Put()
-  async updateGame(@Body() updatePersonDto: UpdateGameDto): Promise<Game> {
-    return this.gameService.updateGame(updatePersonDto);
+  @Put('id')
+  async updateGame(
+    @Body() updatePersonDto: UpdateGameTypeWithoutId,
+    @Param('id') id: number,
+  ): Promise<Game> {
+    return this.gameService.updateGame({ ...updatePersonDto, id: id });
   }
 
   @UseGuards(RolesGuard)

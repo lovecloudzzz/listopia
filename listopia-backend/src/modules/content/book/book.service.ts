@@ -1,7 +1,7 @@
 import { FileUtil } from '@common/utils/file.util';
-import { CreateBookDto } from '@modules/content/book/dto/createBook.dto';
-import { GetBooksDto } from '@modules/content/book/dto/getBooks.dto';
-import { UpdateBookDto } from '@modules/content/book/dto/updateBook.dto';
+import type { CreateBookType } from '@modules/content/book/types/createBook.type';
+import type { GetBooksType } from '@modules/content/book/types/getBooks.type';
+import type { UpdateBookType } from '@modules/content/book/types/updateBook.type';
 import { CastService } from '@modules/content/cast/cast.service';
 import { Injectable } from '@nestjs/common';
 import { Book, Prisma } from '@prisma/client';
@@ -25,8 +25,9 @@ export class BookService {
     return existingBook;
   }
 
-  async getBooks(getBooksDto: GetBooksDto): Promise<Book[]> {
-    const { page, pageSize, sortField, sortOrder } = getBooksDto;
+  async getBooks(getBooksDto: GetBooksType): Promise<Book[]> {
+    const { page, pageSize, sortField, sortOrder, genreIds, themeIds } =
+      getBooksDto;
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -43,10 +44,16 @@ export class BookService {
       skip,
       take,
       orderBy,
+      where: {
+        AND: [
+          genreIds ? { genres: { some: { id: { in: genreIds } } } } : undefined,
+          themeIds ? { themes: { some: { id: { in: themeIds } } } } : undefined,
+        ],
+      },
     });
   }
 
-  async createBook(createBookDto: CreateBookDto): Promise<Book> {
+  async createBook(createBookDto: CreateBookType): Promise<Book> {
     const {
       title,
       description,
@@ -103,7 +110,7 @@ export class BookService {
     return book;
   }
 
-  async updateBook(updateBookDto: UpdateBookDto): Promise<Book> {
+  async updateBook(updateBookDto: UpdateBookType): Promise<Book> {
     const {
       id,
       title,

@@ -1,34 +1,34 @@
+import { JwtAuthGuard } from '@common/guards/JWTGuard/jwt-auth.guard';
+import type { LoginType } from '@modules/auth/types/login.type';
+import type { LogoutType } from '@modules/auth/types/logout.type';
+import type { RefreshTokenType } from '@modules/auth/types/refresh-token.type';
+import type { RegisterType } from '@modules/auth/types/register.type';
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { LogoutDto } from '@modules/auth/dto/logout.dto';
-import { JwtAuthGuard } from '@common/guards/JWTGuard/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginType) {
     return this.authService.login(loginDto);
   }
 
   @Post('register')
-  async register(@Body() registerDto: RegisterDto) {
+  async register(@Body() registerDto: RegisterType) {
     return this.authService.register(registerDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('refresh-token')
-  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenType) {
     return this.authService.refreshToken(refreshTokenDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@Body('refreshToken') logoutDto: LogoutDto) {
+  async logout(@Body('refreshToken') logoutDto: LogoutType) {
     return this.authService.logout(logoutDto);
   }
 }

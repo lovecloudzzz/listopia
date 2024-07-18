@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prismaPath/prisma.service';
 import { FileUtil } from '@common/utils/file.util';
-import { CreatePublisherDto } from '@modules/content/publisher/dto/createPublisher.dto';
-import { GetPublishersDto } from '@modules/content/publisher/dto/getPublishers.dto';
-import { UpdatePublisherDto } from '@modules/content/publisher/dto/updatePublisherDto';
+import type { CreatePublisherType } from '@modules/content/publisher/types/createPublisher.type';
+import type { GetPublishersType } from '@modules/content/publisher/types/getPublishers.type';
+import type { UpdatePublisherType } from '@modules/content/publisher/types/updatePublisher.type';
+import { Injectable } from '@nestjs/common';
 import { Prisma, Publisher } from '@prisma/client';
+import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
 export class PublisherService {
@@ -30,7 +30,7 @@ export class PublisherService {
   }
 
   async getPublishers(
-    getPublishersDto: GetPublishersDto,
+    getPublishersDto: GetPublishersType,
   ): Promise<Publisher[]> {
     const { page, pageSize, sortField, sortOrder } = getPublishersDto;
     const skip = (page - 1) * pageSize;
@@ -52,7 +52,7 @@ export class PublisherService {
   }
 
   async createPublisher(
-    createPublisherDto: CreatePublisherDto,
+    createPublisherDto: CreatePublisherType,
   ): Promise<Publisher> {
     const { name, description, logo } = createPublisherDto;
 
@@ -75,7 +75,7 @@ export class PublisherService {
   }
 
   async updatePublisher(
-    updatePublisherDto: UpdatePublisherDto,
+    updatePublisherDto: UpdatePublisherType,
   ): Promise<Publisher> {
     const { id, name, description, logo } = updatePublisherDto;
 

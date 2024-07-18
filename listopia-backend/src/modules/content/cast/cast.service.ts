@@ -1,8 +1,8 @@
 import { FileUtil } from '@common/utils/file.util';
-import { CreateCastDto } from '@modules/content/cast/dto/createCast.dto';
-import { DeleteCastDto } from '@modules/content/cast/dto/deleteCast.dto';
-import { GetCastDto } from '@modules/content/cast/dto/getCast.dto';
-import { UpdateCastDto } from '@modules/content/cast/dto/updateCast.dto';
+import type { CreateCastType } from '@modules/content/cast/types/createCast.type';
+import type { DeleteCastType } from '@modules/content/cast/types/deleteCast.type';
+import type { GetCastType } from '@modules/content/cast/types/getCast.type';
+import type { UpdateCastType } from '@modules/content/cast/types/updateCast.type';
 import { Injectable } from '@nestjs/common';
 import { BookCast, ContentType, GameCast, MovieCast } from '@prisma/client';
 import { PrismaService } from '@prismaPath/prisma.service';
@@ -15,7 +15,7 @@ export class CastService {
   ) {}
 
   async getCast(
-    getCastDto: GetCastDto,
+    getCastDto: GetCastType,
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
     const { contentId, contentType } = getCastDto;
     const whereCondition: { [key: string]: number } = this.createWhereCondition(
@@ -68,7 +68,7 @@ export class CastService {
   }
 
   async createCast(
-    createCastDto: CreateCastDto,
+    createCastDto: CreateCastType,
   ): Promise<BookCast | MovieCast | GameCast> {
     const {
       contentId,
@@ -115,7 +115,7 @@ export class CastService {
   }
 
   async createCastByArray(
-    createCastDtos: CreateCastDto[],
+    createCastDtos: CreateCastType[],
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
     const casts = [];
 
@@ -128,7 +128,7 @@ export class CastService {
   }
 
   async updateCast(
-    updateCastDto: UpdateCastDto,
+    updateCastDto: UpdateCastType,
   ): Promise<BookCast | MovieCast | GameCast> {
     const {
       id,
@@ -183,7 +183,7 @@ export class CastService {
   }
 
   async updateCastByArray(
-    updateCastDtos: UpdateCastDto[],
+    updateCastDtos: UpdateCastType[],
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
     const casts = [];
 
@@ -196,7 +196,7 @@ export class CastService {
   }
 
   async deleteCast(
-    deleteCastDto: DeleteCastDto,
+    deleteCastDto: DeleteCastType,
   ): Promise<BookCast | MovieCast | GameCast> {
     const { id, contentType } = deleteCastDto;
 

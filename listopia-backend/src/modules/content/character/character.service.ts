@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prismaPath/prisma.service';
 import { FileUtil } from '@common/utils/file.util';
+import type { CreateCharacterType } from '@modules/content/character/types/createCharacter.type';
+import type { GetCharactersType } from '@modules/content/character/types/getCharacters.type';
+import type { UpdateCharacterType } from '@modules/content/character/types/updateCharacter.type';
+import { Injectable } from '@nestjs/common';
 import { Character, Prisma } from '@prisma/client';
-import { GetCharactersDto } from '@modules/content/character/dto/getCharacters.dto';
-import { CreateCharacterDto } from '@modules/content/character/dto/createCharacter.dto';
-import { UpdateCharacterDto } from '@modules/content/character/dto/updateCharacter.dto';
+import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
 export class CharacterService {
@@ -26,7 +26,7 @@ export class CharacterService {
   }
 
   async getCharacters(
-    getCharactersDto: GetCharactersDto,
+    getCharactersDto: GetCharactersType,
   ): Promise<Character[]> {
     const { page, pageSize, sortField, sortOrder } = getCharactersDto;
 
@@ -49,7 +49,7 @@ export class CharacterService {
   }
 
   async createCharacter(
-    createCharacterDto: CreateCharacterDto,
+    createCharacterDto: CreateCharacterType,
   ): Promise<Character> {
     const { name, description, photo } = createCharacterDto;
 
@@ -72,7 +72,7 @@ export class CharacterService {
   }
 
   async updateCharacter(
-    updateCharacterDto: UpdateCharacterDto,
+    updateCharacterDto: UpdateCharacterType,
   ): Promise<Character> {
     const { id, name, description, photo } = updateCharacterDto;
 

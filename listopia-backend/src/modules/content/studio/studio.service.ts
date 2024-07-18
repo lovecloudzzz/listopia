@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prismaPath/prisma.service';
 import { FileUtil } from '@common/utils/file.util';
-import { CreateStudioDto } from '@modules/content/studio/dto/createStudio.dto';
-import { GetStudiosDto } from '@modules/content/studio/dto/getStudios.dto';
-import { UpdateStudioDto } from '@modules/content/studio/dto/updateStudioDto';
+import type { CreateStudioType } from '@modules/content/studio/types/createStudio.type';
+import type { GetStudiosType } from '@modules/content/studio/types/getStudios.type';
+import type { UpdateStudioType } from '@modules/content/studio/types/updateStudio.type';
+import { Injectable } from '@nestjs/common';
 import { Prisma, Studio } from '@prisma/client';
+import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
 export class StudioService {
@@ -29,7 +29,7 @@ export class StudioService {
     return this.prisma.studio.findUnique({ where: { id } });
   }
 
-  async getStudios(getStudiosDto: GetStudiosDto): Promise<Studio[]> {
+  async getStudios(getStudiosDto: GetStudiosType): Promise<Studio[]> {
     const { page, pageSize, sortField, sortOrder } = getStudiosDto;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -49,7 +49,7 @@ export class StudioService {
     });
   }
 
-  async createStudio(createStudioDto: CreateStudioDto): Promise<Studio> {
+  async createStudio(createStudioDto: CreateStudioType): Promise<Studio> {
     const { name, description, logo } = createStudioDto;
 
     let logoPath = '';
@@ -70,7 +70,7 @@ export class StudioService {
     });
   }
 
-  async updateStudio(updateStudioDto: UpdateStudioDto): Promise<Studio> {
+  async updateStudio(updateStudioDto: UpdateStudioType): Promise<Studio> {
     const { id, name, description, logo } = updateStudioDto;
 
     const existingStudio = await this.prisma.studio.findUnique({

@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prismaPath/prisma.service';
 import { FileUtil } from '@common/utils/file.util';
+import type { CreateFranchiseType } from '@modules/content/franchise/types/createFranchise.type';
+import type { GetFranchisesType } from '@modules/content/franchise/types/getFranchises.type';
+import type { UpdateFranchiseType } from '@modules/content/franchise/types/updateFranchise.type';
+import { Injectable } from '@nestjs/common';
 import { Franchise, Prisma } from '@prisma/client';
-import { GetFranchisesDto } from '@modules/content/franchise/dto/getFranchises.dto';
-import { CreateFranchiseDto } from '@modules/content/franchise/dto/createFranchise.dto';
-import { UpdateFranchiseDto } from '@modules/content/franchise/dto/updateFranchiseDto';
+import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
 export class FranchiseService {
@@ -30,7 +30,7 @@ export class FranchiseService {
   }
 
   async getFranchises(
-    getFranchisesDto: GetFranchisesDto,
+    getFranchisesDto: GetFranchisesType,
   ): Promise<Franchise[]> {
     const { page, pageSize, sortField, sortOrder } = getFranchisesDto;
     const skip = (page - 1) * pageSize;
@@ -52,7 +52,7 @@ export class FranchiseService {
   }
 
   async createFranchise(
-    createFranchiseDto: CreateFranchiseDto,
+    createFranchiseDto: CreateFranchiseType,
   ): Promise<Franchise> {
     const { name, description, logo } = createFranchiseDto;
 
@@ -75,7 +75,7 @@ export class FranchiseService {
   }
 
   async updateFranchise(
-    updateFranchiseDto: UpdateFranchiseDto,
+    updateFranchiseDto: UpdateFranchiseType,
   ): Promise<Franchise> {
     const { id, name, description, logo } = updateFranchiseDto;
 

@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prismaPath/prisma.service';
 import { FileUtil } from '@common/utils/file.util';
+import type { CreateDeveloperType } from '@modules/content/developer/types/createDeveloper.type';
+import type { GetDevelopersType } from '@modules/content/developer/types/getDevelopers.type';
+import type { UpdateDeveloperType } from '@modules/content/developer/types/updateDeveloper.type';
+import { Injectable } from '@nestjs/common';
 import { Developer, Prisma } from '@prisma/client';
-import { GetDevelopersDto } from '@modules/content/developer/dto/getDevelopers.dto';
-import { CreateDeveloperDto } from '@modules/content/developer/dto/createDeveloper.dto';
-import { UpdateDeveloperDto } from '@modules/content/developer/dto/updateDeveloperDto';
+import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
 export class DeveloperService {
@@ -30,7 +30,7 @@ export class DeveloperService {
   }
 
   async getDevelopers(
-    getDevelopersDto: GetDevelopersDto,
+    getDevelopersDto: GetDevelopersType,
   ): Promise<Developer[]> {
     const { page, pageSize, sortField, sortOrder } = getDevelopersDto;
     const skip = (page - 1) * pageSize;
@@ -52,7 +52,7 @@ export class DeveloperService {
   }
 
   async createDeveloper(
-    createDeveloperDto: CreateDeveloperDto,
+    createDeveloperDto: CreateDeveloperType,
   ): Promise<Developer> {
     const { name, description, logo } = createDeveloperDto;
 
@@ -75,7 +75,7 @@ export class DeveloperService {
   }
 
   async updateDeveloper(
-    updateDeveloperDto: UpdateDeveloperDto,
+    updateDeveloperDto: UpdateDeveloperType,
   ): Promise<Developer> {
     const { id, name, description, logo } = updateDeveloperDto;
 

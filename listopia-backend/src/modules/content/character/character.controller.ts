@@ -1,3 +1,8 @@
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { CreateCharacterType } from '@modules/content/character/types/createCharacter.type';
+import type { GetCharactersType } from '@modules/content/character/types/getCharacters.type';
+import type { UpdateCharacterTypeWithoutId } from '@modules/content/character/types/updateCharacter.type';
 import {
   Body,
   Controller,
@@ -9,13 +14,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CharacterService } from './character.service';
 import { Character } from '@prisma/client';
-import { GetCharactersDto } from '@modules/content/character/dto/getCharacters.dto';
-import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
-import { UpdateCharacterDto } from '@modules/content/character/dto/updateCharacter.dto';
-import { CreateCharacterDto } from '@modules/content/character/dto/createCharacter.dto';
+import { CharacterService } from './character.service';
 
 @Controller('character')
 export class CharacterController {
@@ -28,7 +28,7 @@ export class CharacterController {
 
   @Get()
   async getCharacters(
-    @Query() getCharacterDto: GetCharactersDto,
+    @Query() getCharacterDto: GetCharactersType,
   ): Promise<Character[]> {
     return this.characterService.getCharacters(getCharacterDto);
   }
@@ -37,18 +37,22 @@ export class CharacterController {
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createCharacter(
-    @Body() createCharacterDto: CreateCharacterDto,
+    @Body() createCharacterDto: CreateCharacterType,
   ): Promise<Character> {
     return this.characterService.createCharacter(createCharacterDto);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Put()
+  @Put(':id')
   async updateCharacter(
-    @Body() updateCharacterDto: UpdateCharacterDto,
+    @Body() updateCharacterDto: UpdateCharacterTypeWithoutId,
+    @Param('id') id: number,
   ): Promise<Character> {
-    return this.characterService.updateCharacter(updateCharacterDto);
+    return this.characterService.updateCharacter({
+      ...updateCharacterDto,
+      id: id,
+    });
   }
 
   @UseGuards(RolesGuard)

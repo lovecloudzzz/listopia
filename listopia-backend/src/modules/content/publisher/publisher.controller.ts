@@ -1,3 +1,8 @@
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { CreatePublisherType } from '@modules/content/publisher/types/createPublisher.type';
+import type { GetPublishersType } from '@modules/content/publisher/types/getPublishers.type';
+import type { UpdatePublisherTypeWithoutId } from '@modules/content/publisher/types/updatePublisher.type';
 import {
   Body,
   Controller,
@@ -9,13 +14,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PublisherService } from './publisher.service';
 import { Publisher } from '@prisma/client';
-import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
-import { GetPublishersDto } from '@modules/content/publisher/dto/getPublishers.dto';
-import { CreatePublisherDto } from '@modules/content/publisher/dto/createPublisher.dto';
-import { UpdatePublisherDto } from '@modules/content/publisher/dto/updatePublisherDto';
+import { PublisherService } from './publisher.service';
 
 @Controller('publisher')
 export class PublisherController {
@@ -28,7 +28,7 @@ export class PublisherController {
 
   @Get()
   async getPublishers(
-    @Query() getPublishersDto: GetPublishersDto,
+    @Query() getPublishersDto: GetPublishersType,
   ): Promise<Publisher[]> {
     return this.publisherService.getPublishers(getPublishersDto);
   }
@@ -37,7 +37,7 @@ export class PublisherController {
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createPublisher(
-    @Body() createPublisherDto: CreatePublisherDto,
+    @Body() createPublisherDto: CreatePublisherType,
   ): Promise<Publisher> {
     return this.publisherService.createPublisher(createPublisherDto);
   }
@@ -46,9 +46,13 @@ export class PublisherController {
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updatePublisher(
-    @Body() updatePublisherDto: UpdatePublisherDto,
+    @Body() updatePublisherDto: UpdatePublisherTypeWithoutId,
+    @Param('id') id: number,
   ): Promise<Publisher> {
-    return this.publisherService.updatePublisher(updatePublisherDto);
+    return this.publisherService.updatePublisher({
+      ...updatePublisherDto,
+      id: id,
+    });
   }
 
   @UseGuards(RolesGuard)

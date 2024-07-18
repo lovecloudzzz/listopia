@@ -1,7 +1,7 @@
+import type { CreateThemeType } from '@modules/content/theme/types/createTheme.type';
+import type { UpdateThemeType } from '@modules/content/theme/types/updateTheme.type';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@prismaPath/prisma.service';
-import { CreateThemeDto } from '@modules/content/theme/dto/createTheme.dto';
-import { UpdateThemeDto } from '@modules/content/theme/dto/updateTheme.dto';
 
 @Injectable()
 export class ThemeService {
@@ -11,7 +11,7 @@ export class ThemeService {
     return this.prisma.theme.findMany();
   }
 
-  async createTheme(createThemeDto: CreateThemeDto) {
+  async createTheme(createThemeDto: CreateThemeType) {
     const { name, description } = createThemeDto;
 
     const existingTheme = await this.prisma.theme.findFirst({
@@ -30,7 +30,7 @@ export class ThemeService {
     });
   }
 
-  async updateTheme(updateThemeDto: UpdateThemeDto) {
+  async updateTheme(updateThemeDto: UpdateThemeType) {
     const { id, name, description } = updateThemeDto;
 
     const existingTheme = await this.prisma.theme.findUnique({

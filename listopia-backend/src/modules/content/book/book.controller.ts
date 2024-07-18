@@ -1,8 +1,8 @@
 import { Roles } from '@common/guards/RolesGuard/roles.decorator';
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { CreateBookDto } from '@modules/content/book/dto/createBook.dto';
-import { GetBooksDto } from '@modules/content/book/dto/getBooks.dto';
-import { UpdateBookDto } from '@modules/content/book/dto/updateBook.dto';
+import type { CreateBookType } from '@modules/content/book/types/createBook.type';
+import type { GetBooksType } from '@modules/content/book/types/getBooks.type';
+import type { UpdateBookTypeWithoutId } from '@modules/content/book/types/updateBook.type';
 import {
   Body,
   Controller,
@@ -27,22 +27,23 @@ export class BookController {
   }
 
   @Get()
-  async getBooks(@Query() getBooksDto: GetBooksDto): Promise<Book[]> {
+  async getBooks(@Query() getBooksDto: GetBooksType): Promise<Book[]> {
     return this.bookService.getBooks(getBooksDto);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
-  async createBook(@Body() createBookDto: CreateBookDto): Promise<Book> {
+  async createBook(@Body() createBookDto: CreateBookType): Promise<Book> {
     return this.bookService.createBook(createBookDto);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles('Admin', 'Developer', 'Editor')
-  @Put()
-  async updateBook(@Body() updatePersonDto: UpdateBookDto): Promise<Book> {
-    return this.bookService.updateBook(updatePersonDto);
+  @Put(':id')
+  async updateBook(
+    @Param('id') id: number,
+    @Body() updateBookDto: UpdateBookTypeWithoutId,
+  ): Promise<Book> {
+    return this.bookService.updateBook({ ...updateBookDto, id: id });
   }
 
   @UseGuards(RolesGuard)

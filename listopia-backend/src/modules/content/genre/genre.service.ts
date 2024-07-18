@@ -1,8 +1,8 @@
+import type { CreateGenreType } from '@modules/content/genre/types/createGenre.type';
+import type { UpdateGenreType } from '@modules/content/genre/types/updateGenre.type';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prismaPath/prisma.service';
 import { ContentType, Genre } from '@prisma/client';
-import { CreateGenreDto } from '@modules/content/genre/dto/createGenre.dto';
-import { UpdateGenreDto } from '@modules/content/genre/dto/updateGenre.dto';
+import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
 export class GenreService {
@@ -22,7 +22,7 @@ export class GenreService {
     });
   }
 
-  async createGenre(createGenreDto: CreateGenreDto): Promise<Genre> {
+  async createGenre(createGenreDto: CreateGenreType): Promise<Genre> {
     const { name, description, types } = createGenreDto;
     const existingGenre = await this.prisma.genre.findFirst({
       where: { name: name.toLowerCase() },
@@ -41,7 +41,7 @@ export class GenreService {
     });
   }
 
-  async updateGenre(updateGenreDto: UpdateGenreDto): Promise<Genre> {
+  async updateGenre(updateGenreDto: UpdateGenreType): Promise<Genre> {
     const { id, name, description, types } = updateGenreDto;
     const existingGenre = await this.prisma.genre.findUnique({
       where: { id },

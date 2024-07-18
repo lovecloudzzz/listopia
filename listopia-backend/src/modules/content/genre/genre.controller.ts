@@ -1,10 +1,19 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { GenreService } from './genre.service';
-import { CreateGenreDto } from '@modules/content/genre/dto/createGenre.dto';
-import { ContentType } from '@prisma/client';
-import { UpdateGenreDto } from '@modules/content/genre/dto/updateGenre.dto';
-import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { CreateGenreType } from '@modules/content/genre/types/createGenre.type';
+import type { UpdateGenreTypeWithoutId } from '@modules/content/genre/types/updateGenre.type';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import { ContentType } from '@prisma/client';
+import { GenreService } from './genre.service';
 
 @Controller('genre')
 export class GenreController {
@@ -12,30 +21,29 @@ export class GenreController {
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Post('createGenre')
-  async createGenre(@Body() createGenreDto: CreateGenreDto) {
+  @Post()
+  async createGenre(@Body() createGenreDto: CreateGenreType) {
     return this.genreService.createGenre(createGenreDto);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Post(':id/update')
+  @Put(':id')
   async updateGenre(
+    @Body() updateGenreDto: UpdateGenreTypeWithoutId,
     @Param('id') id: number,
-    @Body() updateGenreDto: UpdateGenreDto,
   ) {
-    updateGenreDto.id = id;
-    return this.genreService.updateGenre(updateGenreDto);
+    return this.genreService.updateGenre({ ...updateGenreDto, id: id });
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Post(':id/delete')
+  @Delete(':id')
   async deleteGenre(@Param('id') id: number) {
     return this.genreService.deleteGenre(id);
   }
 
-  @Get('')
+  @Get()
   async getAllGenres() {
     return this.genreService.getAllGenres();
   }

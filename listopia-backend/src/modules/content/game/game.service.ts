@@ -1,8 +1,8 @@
 import { FileUtil } from '@common/utils/file.util';
 import { CastService } from '@modules/content/cast/cast.service';
-import { CreateGameDto } from '@modules/content/game/dto/createGame.dto';
-import { GetGamesDto } from '@modules/content/game/dto/getGames.dto';
-import { UpdateGameDto } from '@modules/content/game/dto/updateGame.dto';
+import type { CreateGameType } from '@modules/content/game/types/createGame.type';
+import type { GetGamesType } from '@modules/content/game/types/getGames.type';
+import type { UpdateGameType } from '@modules/content/game/types/updateGame.type';
 import { Injectable } from '@nestjs/common';
 import { Game, Prisma } from '@prisma/client';
 import { PrismaService } from '@prismaPath/prisma.service';
@@ -25,8 +25,9 @@ export class GameService {
     return existingGame;
   }
 
-  async getGames(getGamesDto: GetGamesDto): Promise<Game[]> {
-    const { page, pageSize, sortField, sortOrder } = getGamesDto;
+  async getGames(getGamesDto: GetGamesType): Promise<Game[]> {
+    const { page, pageSize, sortField, sortOrder, genreIds, themeIds } =
+      getGamesDto;
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -43,10 +44,16 @@ export class GameService {
       skip,
       take,
       orderBy,
+      where: {
+        AND: [
+          genreIds ? { genres: { some: { id: { in: genreIds } } } } : undefined,
+          themeIds ? { themes: { some: { id: { in: themeIds } } } } : undefined,
+        ],
+      },
     });
   }
 
-  async createGame(createGameDto: CreateGameDto): Promise<Game> {
+  async createGame(createGameDto: CreateGameType): Promise<Game> {
     const {
       title,
       description,
@@ -111,7 +118,7 @@ export class GameService {
     return game;
   }
 
-  async updateGame(updateGameDto: UpdateGameDto): Promise<Game> {
+  async updateGame(updateGameDto: UpdateGameType): Promise<Game> {
     const {
       id,
       title,

@@ -1,3 +1,8 @@
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { CreateDeveloperType } from '@modules/content/developer/types/createDeveloper.type';
+import type { GetDevelopersType } from '@modules/content/developer/types/getDevelopers.type';
+import type { UpdateDeveloperTypeWithoutId } from '@modules/content/developer/types/updateDeveloper.type';
 import {
   Body,
   Controller,
@@ -9,13 +14,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { DeveloperService } from './developer.service';
 import { Developer } from '@prisma/client';
-import { GetDevelopersDto } from '@modules/content/developer/dto/getDevelopers.dto';
-import { CreateDeveloperDto } from '@modules/content/developer/dto/createDeveloper.dto';
-import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
-import { UpdateDeveloperDto } from '@modules/content/developer/dto/updateDeveloperDto';
+import { DeveloperService } from './developer.service';
 
 @Controller('developer')
 export class DeveloperController {
@@ -28,7 +28,7 @@ export class DeveloperController {
 
   @Get()
   async getDevelopers(
-    @Query() getDevelopersDto: GetDevelopersDto,
+    @Query() getDevelopersDto: GetDevelopersType,
   ): Promise<Developer[]> {
     return this.developerService.getDevelopers(getDevelopersDto);
   }
@@ -37,7 +37,7 @@ export class DeveloperController {
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createDeveloper(
-    @Body() createDeveloperDto: CreateDeveloperDto,
+    @Body() createDeveloperDto: CreateDeveloperType,
   ): Promise<Developer> {
     return this.developerService.createDeveloper(createDeveloperDto);
   }
@@ -46,9 +46,13 @@ export class DeveloperController {
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updateDeveloper(
-    @Body() updateDeveloperDto: UpdateDeveloperDto,
+    @Body() updateDeveloperDto: UpdateDeveloperTypeWithoutId,
+    @Param('id') id: number,
   ): Promise<Developer> {
-    return this.developerService.updateDeveloper(updateDeveloperDto);
+    return this.developerService.updateDeveloper({
+      ...updateDeveloperDto,
+      id: id,
+    });
   }
 
   @UseGuards(RolesGuard)

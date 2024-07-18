@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@prismaPath/prisma.service';
 import { FileUtil } from '@common/utils/file.util';
-import { CreatePlatformDto } from '@modules/content/platform/dto/createPlatform.dto';
-import { GetPlatformsDto } from '@modules/content/platform/dto/getPlatforms.dto';
-import { UpdatePlatformDto } from '@modules/content/platform/dto/updatePlatformDto';
+import type { CreatePlatformType } from '@modules/content/platform/types/createPlatform.type';
+import type { GetPlatformsType } from '@modules/content/platform/types/getPlatforms.type';
+import type { UpdatePlatformType } from '@modules/content/platform/types/updatePlatform.type';
+import { Injectable } from '@nestjs/common';
 import { Platform, Prisma } from '@prisma/client';
+import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
 export class PlatformService {
@@ -29,7 +29,7 @@ export class PlatformService {
     return this.prisma.platform.findUnique({ where: { id } });
   }
 
-  async getPlatforms(getPlatformsDto: GetPlatformsDto): Promise<Platform[]> {
+  async getPlatforms(getPlatformsDto: GetPlatformsType): Promise<Platform[]> {
     const { page, pageSize, sortField, sortOrder } = getPlatformsDto;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -50,7 +50,7 @@ export class PlatformService {
   }
 
   async createPlatform(
-    createPlatformDto: CreatePlatformDto,
+    createPlatformDto: CreatePlatformType,
   ): Promise<Platform> {
     const { name, description, logo } = createPlatformDto;
 
@@ -73,7 +73,7 @@ export class PlatformService {
   }
 
   async updatePlatform(
-    updatePlatformDto: UpdatePlatformDto,
+    updatePlatformDto: UpdatePlatformType,
   ): Promise<Platform> {
     const { id, name, description, logo } = updatePlatformDto;
 

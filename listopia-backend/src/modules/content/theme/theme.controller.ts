@@ -1,10 +1,19 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 
 import { ThemeService } from '@modules/content/theme/theme.service';
-import { CreateThemeDto } from '@modules/content/theme/dto/createTheme.dto';
-import { UpdateThemeDto } from '@modules/content/theme/dto/updateTheme.dto';
-import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import type { CreateThemeType } from '@modules/content/theme/types/createTheme.type';
+import type { UpdateThemeType } from '@modules/content/theme/types/updateTheme.type';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 
 @Controller('theme')
 export class ThemeController {
@@ -12,30 +21,29 @@ export class ThemeController {
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Post('createTheme')
-  async createTheme(@Body() createThemeDto: CreateThemeDto) {
+  @Post()
+  async createTheme(@Body() createThemeDto: CreateThemeType) {
     return this.themeService.createTheme(createThemeDto);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Post(':id/update')
+  @Put(':id')
   async updateTheme(
+    @Body() updateThemeDto: UpdateThemeType,
     @Param('id') id: number,
-    @Body() updateThemeDto: UpdateThemeDto,
   ) {
-    updateThemeDto.id = id;
-    return this.themeService.updateTheme(updateThemeDto);
+    return this.themeService.updateTheme({ ...updateThemeDto, id: id });
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
-  @Post(':id/delete')
+  @Delete(':id')
   async deleteTheme(@Param('id') id: number) {
     return this.themeService.deleteTheme(id);
   }
 
-  @Get('')
+  @Get()
   async getAllThemes() {
     return this.themeService.getAllThemes();
   }
