@@ -73,13 +73,13 @@ export class BookService {
 
     const book = await this.prisma.book.create({
       data: {
-        title,
-        description,
-        posterPath,
-        release,
-        status,
-        pageCount,
-        ageRating,
+        title: title,
+        description: description,
+        posterPath: posterPath,
+        release: release,
+        status: status,
+        pageCount: pageCount,
+        ageRating: ageRating,
         authors: {
           connect: authors_ids.map((id) => ({ id })),
         },
@@ -136,12 +136,12 @@ export class BookService {
     }
 
     const updateData: any = {
-      title,
-      description,
-      release,
-      status,
-      pageCount,
-      ageRating,
+      title: title,
+      description: description,
+      release: release,
+      status: status,
+      pageCount: pageCount,
+      ageRating: ageRating,
     };
 
     if (posterPath) {

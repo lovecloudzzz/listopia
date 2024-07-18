@@ -4,7 +4,7 @@ import { AgeRating, BookStatus } from '@prisma/client';
 export interface CreateBookDto {
   title: string;
   description?: string;
-  authors_ids: number[];
+  authors_ids?: number[];
   poster?: Express.Multer.File;
   release?: Date;
   ageRating?: AgeRating;

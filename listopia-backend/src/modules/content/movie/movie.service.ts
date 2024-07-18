@@ -1,37 +1,37 @@
 import { FileUtil } from '@common/utils/file.util';
 import { CastService } from '@modules/content/cast/cast.service';
-import { CreateGameDto } from '@modules/content/game/dto/createGame.dto';
-import { GetGamesDto } from '@modules/content/game/dto/getGames.dto';
-import { UpdateGameDto } from '@modules/content/game/dto/updateGame.dto';
+import { CreateMovieDto } from '@modules/content/movie/dto/createMovie.dto';
+import { GetMoviesDto } from '@modules/content/movie/dto/getMovies.dto';
+import { UpdateMovieDto } from '@modules/content/movie/dto/updateMovie.dto';
 import { Injectable } from '@nestjs/common';
-import { Game, Prisma } from '@prisma/client';
+import { Movie, Prisma } from '@prisma/client';
 import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
-export class GameService {
+export class MovieService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly fileUtil: FileUtil,
     private readonly castService: CastService,
   ) {}
 
-  async getGame(id: number): Promise<Game> {
-    const existingGame = this.prisma.game.findUnique({ where: { id: id } });
+  async getMovie(id: number): Promise<Movie> {
+    const existingMovie = this.prisma.movie.findUnique({ where: { id: id } });
 
-    if (!existingGame) {
-      throw new Error('Game not found');
+    if (!existingMovie) {
+      throw new Error('Movie not found');
     }
 
-    return existingGame;
+    return existingMovie;
   }
 
-  async getGames(getGamesDto: GetGamesDto): Promise<Game[]> {
-    const { page, pageSize, sortField, sortOrder } = getGamesDto;
+  async getMovies(getMoviesDto: GetMoviesDto): Promise<Movie[]> {
+    const { page, pageSize, sortField, sortOrder } = getMoviesDto;
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
-    let orderBy: Prisma.GameOrderByWithRelationInput = {
+    let orderBy: Prisma.MovieOrderByWithRelationInput = {
       visitCount: 'desc',
     };
 
@@ -39,57 +39,59 @@ export class GameService {
       orderBy = { [sortField]: sortOrder };
     }
 
-    return this.prisma.game.findMany({
+    return this.prisma.movie.findMany({
       skip,
       take,
       orderBy,
     });
   }
 
-  async createGame(createGameDto: CreateGameDto): Promise<Game> {
+  async createMovie(createMovieDto: CreateMovieDto): Promise<Movie> {
     const {
       title,
       description,
+      movieType,
       poster,
-      developers_ids,
-      publishers_ids,
-      platforms_ids,
+      directors_ids,
+      studios_ids,
       themes_ids,
       release,
       genres_ids,
       franchise_ids,
       cast,
       status,
+      isSeries,
+      seriesCount,
       duration,
       ageRating,
-    } = createGameDto;
+    } = createMovieDto;
 
     let posterPath = '';
     if (poster) {
       posterPath = await this.fileUtil.saveFile({
         file: poster,
         filename: `${title}_${Date.now()}`,
-        folder: 'game_posters',
+        folder: 'movie_posters',
       });
     }
 
-    const game = await this.prisma.game.create({
+    const movie = await this.prisma.movie.create({
       data: {
         title: title,
         description: description,
+        MovieType: movieType,
         posterPath: posterPath,
         release: release,
         status: status,
         duration: duration,
         ageRating: ageRating,
-        developers: {
-          connect: developers_ids.map((id) => ({ id })),
+        isSeries: isSeries,
+        seriesCount: seriesCount,
+        directors: {
+          connect: directors_ids.map((id) => ({ id })),
         },
-        publishers: {
-          connect: publishers_ids.map((id) => ({ id })),
-        },
-        platforms: {
-          connect: platforms_ids.map((id) => ({ id })),
+        studios: {
+          connect: studios_ids.map((id) => ({ id })),
         },
         themes: {
           connect: themes_ids.map((id) => ({ id })),
@@ -97,84 +99,82 @@ export class GameService {
         genres: {
           connect: genres_ids.map((id) => ({ id })),
         },
-        GameFranchise: {
+        MovieFranchise: {
           connect: franchise_ids.map((id) => ({ id })),
         },
       },
     });
 
     if (cast && cast.length > 0) {
-      const updatedCast = cast.map((c) => ({ ...c, contentId: game.id }));
+      const updatedCast = cast.map((c) => ({ ...c, contentId: movie.id }));
       await this.castService.createCastByArray(updatedCast);
     }
 
-    return game;
+    return movie;
   }
 
-  async updateGame(updateGameDto: UpdateGameDto): Promise<Game> {
+  async updateMovie(updateMovieDto: UpdateMovieDto): Promise<Movie> {
     const {
       id,
       title,
       description,
+      movieType,
       poster,
-      developers_ids,
-      publishers_ids,
-      platforms_ids,
+      directors_ids,
+      studios_ids,
       themes_ids,
       release,
       genres_ids,
       franchise_ids,
       cast,
       status,
+      isSeries,
+      seriesCount,
       duration,
       ageRating,
-    } = updateGameDto;
+    } = updateMovieDto;
 
-    const existingGame = await this.prisma.game.findUnique({ where: { id } });
-    if (!existingGame) {
-      throw new Error('Game not found');
+    const existingMovie = await this.prisma.movie.findUnique({ where: { id } });
+    if (!existingMovie) {
+      throw new Error('Movie not found');
     }
 
-    let posterPath = existingGame.posterPath;
+    let posterPath = existingMovie.posterPath;
     if (poster) {
       posterPath = await this.fileUtil.updateFile(
         poster,
-        existingGame.posterPath,
+        existingMovie.posterPath,
         `${title}_${Date.now()}`,
-        'game_posters',
+        'movie_posters',
       );
     }
 
     const updateData: any = {
       title: title,
       description: description,
+      MovieType: movieType,
       release: release,
       status: status,
       duration: duration,
       ageRating: ageRating,
+      isSeries: isSeries,
+      seriesCount: seriesCount,
     };
 
     if (posterPath) {
       updateData.posterPath = posterPath;
     }
 
-    if (developers_ids) {
-      updateData.developers = {
-        set: developers_ids.map((id) => ({ id })),
+    if (directors_ids) {
+      updateData.directors = {
+        set: directors_ids.map((id) => ({ id })),
       };
     }
-    if (publishers_ids) {
-      updateData.publishers = {
-        set: publishers_ids.map((id) => ({ id })),
+    if (studios_ids) {
+      updateData.studios = {
+        set: studios_ids.map((id) => ({ id })),
       };
     }
-
-    if (platforms_ids) {
-      updateData.platforms = {
-        set: platforms_ids.map((id) => ({ id })),
-      };
-    }
-
     if (themes_ids) {
       updateData.themes = {
         set: themes_ids.map((id) => ({ id })),
@@ -188,12 +188,12 @@ export class GameService {
     }
 
     if (franchise_ids) {
-      updateData.GameFranchise = {
+      updateData.MovieFranchise = {
         set: franchise_ids.map((id) => ({ id })),
       };
     }
 
-    const game = await this.prisma.game.update({
+    const movie = await this.prisma.movie.update({
       where: { id },
       data: updateData,
     });
@@ -202,10 +202,10 @@ export class GameService {
       await this.castService.updateCastByArray(cast);
     }
 
-    return game;
+    return movie;
   }
 
-  async deleteGame(id: number): Promise<Game> {
-    return this.prisma.game.delete({ where: { id } });
+  async deleteMovie(id: number): Promise<Movie> {
+    return this.prisma.movie.delete({ where: { id } });
   }
 }

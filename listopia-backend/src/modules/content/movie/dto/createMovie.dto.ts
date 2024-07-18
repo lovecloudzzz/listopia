@@ -1,17 +1,19 @@
 import { CreateCastDtoWithoutId } from '@modules/content/cast/dto/createCast.dto';
-import { AgeRating, GameStatus } from '@prisma/client';
+import { AgeRating, MovieStatus, MovieType } from '@prisma/client';
 
-export interface CreateGameDto {
+export interface CreateMovieDto {
   title: string;
   description?: string;
-  developers_ids?: number[];
-  publishers_ids?: number[];
-  platforms_ids?: number[];
+  movieType?: MovieType;
+  directors_ids?: number[];
+  studios_ids?: number[];
   poster?: Express.Multer.File;
   release?: Date;
   ageRating?: AgeRating;
-  status?: GameStatus;
+  status?: MovieStatus;
   duration?: number;
+  isSeries?: boolean;
+  seriesCount?: number;
   genres_ids?: number[];
   themes_ids?: number[];
   franchise_ids?: number[];
