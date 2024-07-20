@@ -26,9 +26,9 @@ export class CharacterService {
   }
 
   async getCharacters(
-    getCharactersDto: GetCharactersType,
+    getCharactersData: GetCharactersType,
   ): Promise<Character[]> {
-    const { page, pageSize, sortField, sortOrder } = getCharactersDto;
+    const { page, pageSize, sortField, sortOrder } = getCharactersData;
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -49,9 +49,9 @@ export class CharacterService {
   }
 
   async createCharacter(
-    createCharacterDto: CreateCharacterType,
+    createCharacterData: CreateCharacterType,
   ): Promise<Character> {
-    const { name, description, photo } = createCharacterDto;
+    const { name, description, photo } = createCharacterData;
 
     let photoPath = '';
     if (photo) {
@@ -72,9 +72,9 @@ export class CharacterService {
   }
 
   async updateCharacter(
-    updateCharacterDto: UpdateCharacterType,
+    updateCharacterData: UpdateCharacterType,
   ): Promise<Character> {
-    const { id, name, description, photo } = updateCharacterDto;
+    const { id, name, description, photo } = updateCharacterData;
 
     const existingCharacter = await this.prisma.person.findUnique({
       where: { id: id },

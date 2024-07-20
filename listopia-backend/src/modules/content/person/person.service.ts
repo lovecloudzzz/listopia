@@ -31,8 +31,8 @@ export class PersonService {
     return existingPerson;
   }
 
-  async getPersons(getPersonsDto: GetPersonsType): Promise<Person[]> {
-    const { page, pageSize, sortField, sortOrder } = getPersonsDto;
+  async getPersons(getPersonsData: GetPersonsType): Promise<Person[]> {
+    const { page, pageSize, sortField, sortOrder } = getPersonsData;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
@@ -52,10 +52,10 @@ export class PersonService {
   }
 
   async getPersonsByCareer(
-    getPersonsByCareerDto: GetPersonsByCareerType,
+    getPersonsByCareerData: GetPersonsByCareerType,
   ): Promise<Person[]> {
     const { career, page, pageSize, sortField, sortOrder } =
-      getPersonsByCareerDto;
+      getPersonsByCareerData;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
@@ -72,8 +72,8 @@ export class PersonService {
     });
   }
 
-  async createPerson(createPersonDto: CreatePersonType): Promise<Person> {
-    const { name, description, photo, birthday, career } = createPersonDto;
+  async createPerson(createPersonData: CreatePersonType): Promise<Person> {
+    const { name, description, photo, birthday, career } = createPersonData;
 
     let photoPath = '';
     if (photo) {
@@ -95,8 +95,8 @@ export class PersonService {
     });
   }
 
-  async updatePerson(updatePersonDto: UpdatePersonType): Promise<Person> {
-    const { id, name, description, photo, birthday, career } = updatePersonDto;
+  async updatePerson(updatePersonData: UpdatePersonType): Promise<Person> {
+    const { id, name, description, photo, birthday, career } = updatePersonData;
 
     const existingPerson = await this.prisma.person.findUnique({
       where: { id: id },

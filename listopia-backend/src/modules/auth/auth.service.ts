@@ -29,8 +29,8 @@ export class AuthService {
     return null;
   }
 
-  async login(loginDto: LoginType) {
-    const { usernameOrEmail, password } = loginDto;
+  async login(loginData: LoginType) {
+    const { usernameOrEmail, password } = loginData;
     const user = await this.validateUser(usernameOrEmail, password);
     if (!user) {
       throw new Error('User not found');
@@ -64,8 +64,8 @@ export class AuthService {
     };
   }
 
-  async register(registerDto: RegisterType) {
-    const { email, password, username } = registerDto;
+  async register(registerData: RegisterType) {
+    const { email, password, username } = registerData;
     if (!email || !password || !username) {
       throw new Error('All fields are required');
     }
@@ -81,12 +81,12 @@ export class AuthService {
         profileName: username,
       },
     });
-    const loginDto: LoginType = { usernameOrEmail: email, password: password };
-    return this.login(loginDto);
+    const loginData: LoginType = { usernameOrEmail: email, password: password };
+    return this.login(loginData);
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenType) {
-    const { refreshToken } = refreshTokenDto;
+  async refreshToken(refreshTokenData: RefreshTokenType) {
+    const { refreshToken } = refreshTokenData;
     const token = await this.prisma.refreshToken.findUnique({
       where: { token: refreshToken },
     });
@@ -129,8 +129,8 @@ export class AuthService {
     };
   }
 
-  async logout(logoutDto: LogoutType) {
-    const { userId, refreshToken } = logoutDto;
+  async logout(logoutData: LogoutType) {
+    const { userId, refreshToken } = logoutData;
 
     const token = await this.prisma.refreshToken.findUnique({
       where: { token: refreshToken },

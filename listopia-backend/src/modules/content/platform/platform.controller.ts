@@ -28,29 +28,29 @@ export class PlatformController {
 
   @Get()
   async getPlatforms(
-    @Query() getPlatformsDto: GetPlatformsType,
+    @Query() getPlatformsData: GetPlatformsType,
   ): Promise<Platform[]> {
-    return this.platformService.getPlatforms(getPlatformsDto);
+    return this.platformService.getPlatforms(getPlatformsData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createPlatform(
-    @Body() createPlatformDto: CreatePlatformType,
+    @Body() createPlatformData: CreatePlatformType,
   ): Promise<Platform> {
-    return this.platformService.createPlatform(createPlatformDto);
+    return this.platformService.createPlatform(createPlatformData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updatePlatform(
-    @Body() updatePlatformDto: UpdatePlatformTypeWithoutId,
+    @Body() updatePlatformData: UpdatePlatformTypeWithoutId,
     @Param('id') id: number,
   ): Promise<Platform> {
     return this.platformService.updatePlatform({
-      ...updatePlatformDto,
+      ...updatePlatformData,
       id: id,
     });
   }

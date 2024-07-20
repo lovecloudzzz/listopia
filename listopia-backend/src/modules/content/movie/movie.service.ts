@@ -25,9 +25,9 @@ export class MovieService {
     return existingMovie;
   }
 
-  async getMovies(getMoviesDto: GetMoviesType): Promise<Movie[]> {
+  async getMovies(getMoviesData: GetMoviesType): Promise<Movie[]> {
     const { page, pageSize, sortField, sortOrder, genreIds, themeIds } =
-      getMoviesDto;
+      getMoviesData;
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -53,7 +53,7 @@ export class MovieService {
     });
   }
 
-  async createMovie(createMovieDto: CreateMovieType): Promise<Movie> {
+  async createMovie(createMovieData: CreateMovieType): Promise<Movie> {
     const {
       title,
       description,
@@ -71,7 +71,7 @@ export class MovieService {
       seriesCount,
       duration,
       ageRating,
-    } = createMovieDto;
+    } = createMovieData;
 
     let posterPath = '';
     if (poster) {
@@ -120,7 +120,7 @@ export class MovieService {
     return movie;
   }
 
-  async updateMovie(updateMovieDto: UpdateMovieType): Promise<Movie> {
+  async updateMovie(updateMovieData: UpdateMovieType): Promise<Movie> {
     const {
       id,
       title,
@@ -139,7 +139,7 @@ export class MovieService {
       seriesCount,
       duration,
       ageRating,
-    } = updateMovieDto;
+    } = updateMovieData;
 
     const existingMovie = await this.prisma.movie.findUnique({ where: { id } });
     if (!existingMovie) {

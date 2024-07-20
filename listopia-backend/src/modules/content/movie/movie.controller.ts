@@ -27,25 +27,25 @@ export class MovieController {
   }
 
   @Get()
-  async getMovies(@Query() getMoviesDto: GetMoviesType): Promise<Movie[]> {
-    return this.movieService.getMovies(getMoviesDto);
+  async getMovies(@Query() getMoviesData: GetMoviesType): Promise<Movie[]> {
+    return this.movieService.getMovies(getMoviesData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
-  async createMovie(@Body() createMovieDto: CreateMovieType): Promise<Movie> {
-    return this.movieService.createMovie(createMovieDto);
+  async createMovie(@Body() createMovieData: CreateMovieType): Promise<Movie> {
+    return this.movieService.createMovie(createMovieData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put('id')
   async updateMovie(
-    @Body() updatePersonDto: UpdateMovieTypeWithoutId,
+    @Body() updatePersonData: UpdateMovieTypeWithoutId,
     @Param('id') id: number,
   ): Promise<Movie> {
-    return this.movieService.updateMovie({ ...updatePersonDto, id: id });
+    return this.movieService.updateMovie({ ...updatePersonData, id: id });
   }
 
   @UseGuards(RolesGuard)

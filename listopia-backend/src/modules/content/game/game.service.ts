@@ -25,9 +25,9 @@ export class GameService {
     return existingGame;
   }
 
-  async getGames(getGamesDto: GetGamesType): Promise<Game[]> {
+  async getGames(getGamesData: GetGamesType): Promise<Game[]> {
     const { page, pageSize, sortField, sortOrder, genreIds, themeIds } =
-      getGamesDto;
+      getGamesData;
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -53,7 +53,7 @@ export class GameService {
     });
   }
 
-  async createGame(createGameDto: CreateGameType): Promise<Game> {
+  async createGame(createGameData: CreateGameType): Promise<Game> {
     const {
       title,
       description,
@@ -69,7 +69,7 @@ export class GameService {
       status,
       duration,
       ageRating,
-    } = createGameDto;
+    } = createGameData;
 
     let posterPath = '';
     if (poster) {
@@ -118,7 +118,7 @@ export class GameService {
     return game;
   }
 
-  async updateGame(updateGameDto: UpdateGameType): Promise<Game> {
+  async updateGame(updateGameData: UpdateGameType): Promise<Game> {
     const {
       id,
       title,
@@ -135,7 +135,7 @@ export class GameService {
       status,
       duration,
       ageRating,
-    } = updateGameDto;
+    } = updateGameData;
 
     const existingGame = await this.prisma.game.findUnique({ where: { id } });
     if (!existingGame) {

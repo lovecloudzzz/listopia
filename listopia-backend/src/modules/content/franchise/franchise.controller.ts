@@ -28,29 +28,29 @@ export class FranchiseController {
 
   @Get()
   async getFranchises(
-    @Query() getFranchisesDto: GetFranchisesType,
+    @Query() getFranchisesData: GetFranchisesType,
   ): Promise<Franchise[]> {
-    return this.franchiseService.getFranchises(getFranchisesDto);
+    return this.franchiseService.getFranchises(getFranchisesData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createFranchise(
-    @Body() createFranchiseDto: CreateFranchiseType,
+    @Body() createFranchiseData: CreateFranchiseType,
   ): Promise<Franchise> {
-    return this.franchiseService.createFranchise(createFranchiseDto);
+    return this.franchiseService.createFranchise(createFranchiseData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updateFranchise(
-    @Body() updateFranchiseDto: UpdateFranchiseTypeWithoutId,
+    @Body() updateFranchiseData: UpdateFranchiseTypeWithoutId,
     @Param('id') id: number,
   ): Promise<Franchise> {
     return this.franchiseService.updateFranchise({
-      ...updateFranchiseDto,
+      ...updateFranchiseData,
       id: id,
     });
   }

@@ -11,4 +11,4 @@ export type CreateCastType = {
   actorId?: number;
 };
 
-export type CreateCastDtoWithoutId = Omit<CreateCastType, 'id'>;
+export type CreateCastDataWithoutId = Omit<CreateCastType, 'id'>;

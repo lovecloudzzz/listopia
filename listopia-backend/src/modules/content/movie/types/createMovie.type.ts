@@ -1,4 +1,4 @@
-import { CreateCastDtoWithoutId } from '@modules/content/cast/types/createCast.type';
+import { CreateCastDataWithoutId } from '@modules/content/cast/types/createCast.type';
 import { AgeRating, MovieStatus, MovieType } from '@prisma/client';
 
 export type CreateMovieType = {
@@ -17,5 +17,5 @@ export type CreateMovieType = {
   genres_ids?: number[];
   themes_ids?: number[];
   franchise_ids?: number[];
-  cast?: CreateCastDtoWithoutId[];
+  cast?: CreateCastDataWithoutId[];
 };

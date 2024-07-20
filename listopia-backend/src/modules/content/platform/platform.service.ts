@@ -29,8 +29,8 @@ export class PlatformService {
     return this.prisma.platform.findUnique({ where: { id } });
   }
 
-  async getPlatforms(getPlatformsDto: GetPlatformsType): Promise<Platform[]> {
-    const { page, pageSize, sortField, sortOrder } = getPlatformsDto;
+  async getPlatforms(getPlatformsData: GetPlatformsType): Promise<Platform[]> {
+    const { page, pageSize, sortField, sortOrder } = getPlatformsData;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
@@ -50,9 +50,9 @@ export class PlatformService {
   }
 
   async createPlatform(
-    createPlatformDto: CreatePlatformType,
+    createPlatformData: CreatePlatformType,
   ): Promise<Platform> {
-    const { name, description, logo } = createPlatformDto;
+    const { name, description, logo } = createPlatformData;
 
     let logoPath = '';
     if (logo) {
@@ -73,9 +73,9 @@ export class PlatformService {
   }
 
   async updatePlatform(
-    updatePlatformDto: UpdatePlatformType,
+    updatePlatformData: UpdatePlatformType,
   ): Promise<Platform> {
-    const { id, name, description, logo } = updatePlatformDto;
+    const { id, name, description, logo } = updatePlatformData;
 
     const existingPlatform = await this.prisma.platform.findUnique({
       where: { id: id },

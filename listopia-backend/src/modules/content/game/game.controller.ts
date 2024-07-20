@@ -27,25 +27,25 @@ export class GameController {
   }
 
   @Get()
-  async getGames(@Query() getGamesDto: GetGamesType): Promise<Game[]> {
-    return this.gameService.getGames(getGamesDto);
+  async getGames(@Query() getGamesData: GetGamesType): Promise<Game[]> {
+    return this.gameService.getGames(getGamesData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
-  async createGame(@Body() createGameDto: CreateGameType): Promise<Game> {
-    return this.gameService.createGame(createGameDto);
+  async createGame(@Body() createGameData: CreateGameType): Promise<Game> {
+    return this.gameService.createGame(createGameData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put('id')
   async updateGame(
-    @Body() updatePersonDto: UpdateGameTypeWithoutId,
+    @Body() updatePersonData: UpdateGameTypeWithoutId,
     @Param('id') id: number,
   ): Promise<Game> {
-    return this.gameService.updateGame({ ...updatePersonDto, id: id });
+    return this.gameService.updateGame({ ...updatePersonData, id: id });
   }
 
   @UseGuards(RolesGuard)

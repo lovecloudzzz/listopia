@@ -15,9 +15,9 @@ export class CastService {
   ) {}
 
   async getCast(
-    getCastDto: GetCastType,
+    getCastData: GetCastType,
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
-    const { contentId, contentType } = getCastDto;
+    const { contentId, contentType } = getCastData;
     const whereCondition: { [key: string]: number } = this.createWhereCondition(
       contentId,
       contentType,
@@ -68,7 +68,7 @@ export class CastService {
   }
 
   async createCast(
-    createCastDto: CreateCastType,
+    createCastData: CreateCastType,
   ): Promise<BookCast | MovieCast | GameCast> {
     const {
       contentId,
@@ -79,7 +79,7 @@ export class CastService {
       roleType,
       characterId,
       actorId,
-    } = createCastDto;
+    } = createCastData;
 
     let rolePhotoPath: string | undefined = undefined;
     if (rolePhoto) {
@@ -115,12 +115,12 @@ export class CastService {
   }
 
   async createCastByArray(
-    createCastDtos: CreateCastType[],
+    createCastDatas: CreateCastType[],
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
     const casts = [];
 
-    for (const createCastDto of createCastDtos) {
-      const cast = await this.createCast(createCastDto);
+    for (const createCastData of createCastDatas) {
+      const cast = await this.createCast(createCastData);
       casts.push(cast);
     }
 
@@ -128,7 +128,7 @@ export class CastService {
   }
 
   async updateCast(
-    updateCastDto: UpdateCastType,
+    updateCastData: UpdateCastType,
   ): Promise<BookCast | MovieCast | GameCast> {
     const {
       id,
@@ -140,7 +140,7 @@ export class CastService {
       roleType,
       characterId,
       actorId,
-    } = updateCastDto;
+    } = updateCastData;
 
     let rolePhotoPath: string | undefined = undefined;
     if (rolePhoto) {
@@ -183,12 +183,12 @@ export class CastService {
   }
 
   async updateCastByArray(
-    updateCastDtos: UpdateCastType[],
+    updateCastDatas: UpdateCastType[],
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
     const casts = [];
 
-    for (const updateCastDto of updateCastDtos) {
-      const cast = await this.updateCast(updateCastDto);
+    for (const updateCastData of updateCastDatas) {
+      const cast = await this.updateCast(updateCastData);
       casts.push(cast);
     }
 
@@ -196,9 +196,9 @@ export class CastService {
   }
 
   async deleteCast(
-    deleteCastDto: DeleteCastType,
+    deleteCastData: DeleteCastType,
   ): Promise<BookCast | MovieCast | GameCast> {
-    const { id, contentType } = deleteCastDto;
+    const { id, contentType } = deleteCastData;
 
     switch (contentType) {
       case 'BOOK':

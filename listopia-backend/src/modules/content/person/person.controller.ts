@@ -28,17 +28,17 @@ export class PersonController {
   }
 
   @Get()
-  async getPersons(@Query() getPersonsDto: GetPersonsType): Promise<Person[]> {
-    return this.personService.getPersons(getPersonsDto);
+  async getPersons(@Query() getPersonsData: GetPersonsType): Promise<Person[]> {
+    return this.personService.getPersons(getPersonsData);
   }
 
   @Get('career/:career')
   async getPersonsByCareer(
     @Param('career') career: PersonCareer,
-    @Query() getPersonsByCareerDto: GetPersonsByCareerType,
+    @Query() getPersonsByCareerData: GetPersonsByCareerType,
   ): Promise<Person[]> {
     return this.personService.getPersonsByCareer({
-      ...getPersonsByCareerDto,
+      ...getPersonsByCareerData,
       career,
     });
   }
@@ -47,19 +47,19 @@ export class PersonController {
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createPerson(
-    @Body() createPersonDto: CreatePersonType,
+    @Body() createPersonData: CreatePersonType,
   ): Promise<Person> {
-    return this.personService.createPerson(createPersonDto);
+    return this.personService.createPerson(createPersonData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put('id')
   async updatePerson(
-    @Body() updatePersonDto: UpdatePersonTypeWithoutId,
+    @Body() updatePersonData: UpdatePersonTypeWithoutId,
     @Param('id') id: number,
   ): Promise<Person> {
-    return this.personService.updatePerson({ ...updatePersonDto, id: id });
+    return this.personService.updatePerson({ ...updatePersonData, id: id });
   }
 
   @UseGuards(RolesGuard)

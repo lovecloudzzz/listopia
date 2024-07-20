@@ -11,8 +11,8 @@ export class ThemeService {
     return this.prisma.theme.findMany();
   }
 
-  async createTheme(createThemeDto: CreateThemeType) {
-    const { name, description } = createThemeDto;
+  async createTheme(createThemeData: CreateThemeType) {
+    const { name, description } = createThemeData;
 
     const existingTheme = await this.prisma.theme.findFirst({
       where: { name: name.toLowerCase() },
@@ -30,8 +30,8 @@ export class ThemeService {
     });
   }
 
-  async updateTheme(updateThemeDto: UpdateThemeType) {
-    const { id, name, description } = updateThemeDto;
+  async updateTheme(updateThemeData: UpdateThemeType) {
+    const { id, name, description } = updateThemeData;
 
     const existingTheme = await this.prisma.theme.findUnique({
       where: { id },

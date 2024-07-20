@@ -30,9 +30,9 @@ export class PublisherService {
   }
 
   async getPublishers(
-    getPublishersDto: GetPublishersType,
+    getPublishersData: GetPublishersType,
   ): Promise<Publisher[]> {
-    const { page, pageSize, sortField, sortOrder } = getPublishersDto;
+    const { page, pageSize, sortField, sortOrder } = getPublishersData;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
@@ -52,9 +52,9 @@ export class PublisherService {
   }
 
   async createPublisher(
-    createPublisherDto: CreatePublisherType,
+    createPublisherData: CreatePublisherType,
   ): Promise<Publisher> {
-    const { name, description, logo } = createPublisherDto;
+    const { name, description, logo } = createPublisherData;
 
     let logoPath = '';
     if (logo) {
@@ -75,9 +75,9 @@ export class PublisherService {
   }
 
   async updatePublisher(
-    updatePublisherDto: UpdatePublisherType,
+    updatePublisherData: UpdatePublisherType,
   ): Promise<Publisher> {
-    const { id, name, description, logo } = updatePublisherDto;
+    const { id, name, description, logo } = updatePublisherData;
 
     const existingPublisher = await this.prisma.publisher.findUnique({
       where: { id: id },

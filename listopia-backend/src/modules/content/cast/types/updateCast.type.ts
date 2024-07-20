@@ -12,4 +12,4 @@ export type UpdateCastType = {
   actorId?: number;
 };
 
-export type UpdateCastDtoWithoutId = Omit<UpdateCastType, 'id'>;
+export type UpdateCastDataWithoutId = Omit<UpdateCastType, 'id'>;

@@ -28,29 +28,29 @@ export class PublisherController {
 
   @Get()
   async getPublishers(
-    @Query() getPublishersDto: GetPublishersType,
+    @Query() getPublishersData: GetPublishersType,
   ): Promise<Publisher[]> {
-    return this.publisherService.getPublishers(getPublishersDto);
+    return this.publisherService.getPublishers(getPublishersData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createPublisher(
-    @Body() createPublisherDto: CreatePublisherType,
+    @Body() createPublisherData: CreatePublisherType,
   ): Promise<Publisher> {
-    return this.publisherService.createPublisher(createPublisherDto);
+    return this.publisherService.createPublisher(createPublisherData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updatePublisher(
-    @Body() updatePublisherDto: UpdatePublisherTypeWithoutId,
+    @Body() updatePublisherData: UpdatePublisherTypeWithoutId,
     @Param('id') id: number,
   ): Promise<Publisher> {
     return this.publisherService.updatePublisher({
-      ...updatePublisherDto,
+      ...updatePublisherData,
       id: id,
     });
   }

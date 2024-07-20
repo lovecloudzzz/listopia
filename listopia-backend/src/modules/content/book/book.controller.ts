@@ -27,23 +27,23 @@ export class BookController {
   }
 
   @Get()
-  async getBooks(@Query() getBooksDto: GetBooksType): Promise<Book[]> {
-    return this.bookService.getBooks(getBooksDto);
+  async getBooks(@Query() getBooksData: GetBooksType): Promise<Book[]> {
+    return this.bookService.getBooks(getBooksData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
-  async createBook(@Body() createBookDto: CreateBookType): Promise<Book> {
-    return this.bookService.createBook(createBookDto);
+  async createBook(@Body() createBookData: CreateBookType): Promise<Book> {
+    return this.bookService.createBook(createBookData);
   }
 
   @Put(':id')
   async updateBook(
     @Param('id') id: number,
-    @Body() updateBookDto: UpdateBookTypeWithoutId,
+    @Body() updateBookData: UpdateBookTypeWithoutId,
   ): Promise<Book> {
-    return this.bookService.updateBook({ ...updateBookDto, id: id });
+    return this.bookService.updateBook({ ...updateBookData, id: id });
   }
 
   @UseGuards(RolesGuard)

@@ -11,24 +11,24 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginDto: LoginType) {
-    return this.authService.login(loginDto);
+  async login(@Body() loginData: LoginType) {
+    return this.authService.login(loginData);
   }
 
   @Post('register')
-  async register(@Body() registerDto: RegisterType) {
-    return this.authService.register(registerDto);
+  async register(@Body() registerData: RegisterType) {
+    return this.authService.register(registerData);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('refresh-token')
-  async refreshToken(@Body() refreshTokenDto: RefreshTokenType) {
-    return this.authService.refreshToken(refreshTokenDto);
+  async refreshToken(@Body() refreshTokenData: RefreshTokenType) {
+    return this.authService.refreshToken(refreshTokenData);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@Body('refreshToken') logoutDto: LogoutType) {
-    return this.authService.logout(logoutDto);
+  async logout(@Body('refreshToken') logoutData: LogoutType) {
+    return this.authService.logout(logoutData);
   }
 }

@@ -22,8 +22,8 @@ export class GenreService {
     });
   }
 
-  async createGenre(createGenreDto: CreateGenreType): Promise<Genre> {
-    const { name, description, types } = createGenreDto;
+  async createGenre(createGenreData: CreateGenreType): Promise<Genre> {
+    const { name, description, types } = createGenreData;
     const existingGenre = await this.prisma.genre.findFirst({
       where: { name: name.toLowerCase() },
     });
@@ -41,8 +41,8 @@ export class GenreService {
     });
   }
 
-  async updateGenre(updateGenreDto: UpdateGenreType): Promise<Genre> {
-    const { id, name, description, types } = updateGenreDto;
+  async updateGenre(updateGenreData: UpdateGenreType): Promise<Genre> {
+    const { id, name, description, types } = updateGenreData;
     const existingGenre = await this.prisma.genre.findUnique({
       where: { id },
     });

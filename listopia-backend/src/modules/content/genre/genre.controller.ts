@@ -22,18 +22,18 @@ export class GenreController {
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
-  async createGenre(@Body() createGenreDto: CreateGenreType) {
-    return this.genreService.createGenre(createGenreDto);
+  async createGenre(@Body() createGenreData: CreateGenreType) {
+    return this.genreService.createGenre(createGenreData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updateGenre(
-    @Body() updateGenreDto: UpdateGenreTypeWithoutId,
+    @Body() updateGenreData: UpdateGenreTypeWithoutId,
     @Param('id') id: number,
   ) {
-    return this.genreService.updateGenre({ ...updateGenreDto, id: id });
+    return this.genreService.updateGenre({ ...updateGenreData, id: id });
   }
 
   @UseGuards(RolesGuard)

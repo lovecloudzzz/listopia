@@ -29,8 +29,8 @@ export class StudioService {
     return this.prisma.studio.findUnique({ where: { id } });
   }
 
-  async getStudios(getStudiosDto: GetStudiosType): Promise<Studio[]> {
-    const { page, pageSize, sortField, sortOrder } = getStudiosDto;
+  async getStudios(getStudiosData: GetStudiosType): Promise<Studio[]> {
+    const { page, pageSize, sortField, sortOrder } = getStudiosData;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
@@ -49,8 +49,8 @@ export class StudioService {
     });
   }
 
-  async createStudio(createStudioDto: CreateStudioType): Promise<Studio> {
-    const { name, description, logo } = createStudioDto;
+  async createStudio(createStudioData: CreateStudioType): Promise<Studio> {
+    const { name, description, logo } = createStudioData;
 
     let logoPath = '';
     if (logo) {
@@ -70,8 +70,8 @@ export class StudioService {
     });
   }
 
-  async updateStudio(updateStudioDto: UpdateStudioType): Promise<Studio> {
-    const { id, name, description, logo } = updateStudioDto;
+  async updateStudio(updateStudioData: UpdateStudioType): Promise<Studio> {
+    const { id, name, description, logo } = updateStudioData;
 
     const existingStudio = await this.prisma.studio.findUnique({
       where: { id: id },

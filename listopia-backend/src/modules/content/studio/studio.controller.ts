@@ -27,27 +27,27 @@ export class StudioController {
   }
 
   @Get()
-  async getStudios(@Query() getStudiosDto: GetStudiosType): Promise<Studio[]> {
-    return this.studioService.getStudios(getStudiosDto);
+  async getStudios(@Query() getStudiosData: GetStudiosType): Promise<Studio[]> {
+    return this.studioService.getStudios(getStudiosData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createStudio(
-    @Body() createStudioDto: CreateStudioType,
+    @Body() createStudioData: CreateStudioType,
   ): Promise<Studio> {
-    return this.studioService.createStudio(createStudioDto);
+    return this.studioService.createStudio(createStudioData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updateStudio(
-    @Body() updateStudioDto: UpdateStudioTypeWithoutId,
+    @Body() updateStudioData: UpdateStudioTypeWithoutId,
     @Param('id') id: number,
   ): Promise<Studio> {
-    return this.studioService.updateStudio({ ...updateStudioDto, id: id });
+    return this.studioService.updateStudio({ ...updateStudioData, id: id });
   }
 
   @UseGuards(RolesGuard)

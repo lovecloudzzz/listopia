@@ -30,9 +30,9 @@ export class FranchiseService {
   }
 
   async getFranchises(
-    getFranchisesDto: GetFranchisesType,
+    getFranchisesData: GetFranchisesType,
   ): Promise<Franchise[]> {
-    const { page, pageSize, sortField, sortOrder } = getFranchisesDto;
+    const { page, pageSize, sortField, sortOrder } = getFranchisesData;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
@@ -52,9 +52,9 @@ export class FranchiseService {
   }
 
   async createFranchise(
-    createFranchiseDto: CreateFranchiseType,
+    createFranchiseData: CreateFranchiseType,
   ): Promise<Franchise> {
-    const { name, description, logo } = createFranchiseDto;
+    const { name, description, logo } = createFranchiseData;
 
     let logoPath = '';
     if (logo) {
@@ -75,9 +75,9 @@ export class FranchiseService {
   }
 
   async updateFranchise(
-    updateFranchiseDto: UpdateFranchiseType,
+    updateFranchiseData: UpdateFranchiseType,
   ): Promise<Franchise> {
-    const { id, name, description, logo } = updateFranchiseDto;
+    const { id, name, description, logo } = updateFranchiseData;
 
     const existingFranchise = await this.prisma.franchise.findUnique({
       where: { id: id },

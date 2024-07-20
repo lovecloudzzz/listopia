@@ -28,29 +28,29 @@ export class DeveloperController {
 
   @Get()
   async getDevelopers(
-    @Query() getDevelopersDto: GetDevelopersType,
+    @Query() getDevelopersData: GetDevelopersType,
   ): Promise<Developer[]> {
-    return this.developerService.getDevelopers(getDevelopersDto);
+    return this.developerService.getDevelopers(getDevelopersData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createDeveloper(
-    @Body() createDeveloperDto: CreateDeveloperType,
+    @Body() createDeveloperData: CreateDeveloperType,
   ): Promise<Developer> {
-    return this.developerService.createDeveloper(createDeveloperDto);
+    return this.developerService.createDeveloper(createDeveloperData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updateDeveloper(
-    @Body() updateDeveloperDto: UpdateDeveloperTypeWithoutId,
+    @Body() updateDeveloperData: UpdateDeveloperTypeWithoutId,
     @Param('id') id: number,
   ): Promise<Developer> {
     return this.developerService.updateDeveloper({
-      ...updateDeveloperDto,
+      ...updateDeveloperData,
       id: id,
     });
   }

@@ -30,9 +30,9 @@ export class DeveloperService {
   }
 
   async getDevelopers(
-    getDevelopersDto: GetDevelopersType,
+    getDevelopersData: GetDevelopersType,
   ): Promise<Developer[]> {
-    const { page, pageSize, sortField, sortOrder } = getDevelopersDto;
+    const { page, pageSize, sortField, sortOrder } = getDevelopersData;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
@@ -52,9 +52,9 @@ export class DeveloperService {
   }
 
   async createDeveloper(
-    createDeveloperDto: CreateDeveloperType,
+    createDeveloperData: CreateDeveloperType,
   ): Promise<Developer> {
-    const { name, description, logo } = createDeveloperDto;
+    const { name, description, logo } = createDeveloperData;
 
     let logoPath = '';
     if (logo) {
@@ -75,9 +75,9 @@ export class DeveloperService {
   }
 
   async updateDeveloper(
-    updateDeveloperDto: UpdateDeveloperType,
+    updateDeveloperData: UpdateDeveloperType,
   ): Promise<Developer> {
-    const { id, name, description, logo } = updateDeveloperDto;
+    const { id, name, description, logo } = updateDeveloperData;
 
     const existingDeveloper = await this.prisma.developer.findUnique({
       where: { id: id },

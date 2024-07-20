@@ -28,29 +28,29 @@ export class CharacterController {
 
   @Get()
   async getCharacters(
-    @Query() getCharacterDto: GetCharactersType,
+    @Query() getCharacterData: GetCharactersType,
   ): Promise<Character[]> {
-    return this.characterService.getCharacters(getCharacterDto);
+    return this.characterService.getCharacters(getCharacterData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createCharacter(
-    @Body() createCharacterDto: CreateCharacterType,
+    @Body() createCharacterData: CreateCharacterType,
   ): Promise<Character> {
-    return this.characterService.createCharacter(createCharacterDto);
+    return this.characterService.createCharacter(createCharacterData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updateCharacter(
-    @Body() updateCharacterDto: UpdateCharacterTypeWithoutId,
+    @Body() updateCharacterData: UpdateCharacterTypeWithoutId,
     @Param('id') id: number,
   ): Promise<Character> {
     return this.characterService.updateCharacter({
-      ...updateCharacterDto,
+      ...updateCharacterData,
       id: id,
     });
   }

@@ -3,7 +3,7 @@ import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreateCastType } from '@modules/content/cast/types/createCast.type';
 import type { GetCastType } from '@modules/content/cast/types/getCast.type';
 import type {
-  UpdateCastDtoWithoutId,
+  UpdateCastDataWithoutId,
   UpdateCastType,
 } from '@modules/content/cast/types/updateCast.type';
 import {
@@ -26,46 +26,46 @@ export class CastController {
 
   @Get()
   async getCast(
-    @Query() getCastDto: GetCastType,
+    @Query() getCastData: GetCastType,
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
-    return this.castService.getCast(getCastDto);
+    return this.castService.getCast(getCastData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
   async createCast(
-    @Body() createCastDto: CreateCastType,
+    @Body() createCastData: CreateCastType,
   ): Promise<BookCast | MovieCast | GameCast> {
-    return this.castService.createCast(createCastDto);
+    return this.castService.createCast(createCastData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post('array')
   async createCastByArray(
-    @Body() createCastDtos: CreateCastType[],
+    @Body() createCastDatas: CreateCastType[],
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
-    return this.castService.createCastByArray(createCastDtos);
+    return this.castService.createCastByArray(createCastDatas);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updateCast(
-    @Body() updateCastDto: UpdateCastDtoWithoutId,
+    @Body() updateCastData: UpdateCastDataWithoutId,
     @Param('id') id: number,
   ): Promise<BookCast | MovieCast | GameCast> {
-    return this.castService.updateCast({ ...updateCastDto, id: id });
+    return this.castService.updateCast({ ...updateCastData, id: id });
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put('array')
   async updateCastByArray(
-    @Body() updateCastDtos: UpdateCastType[],
+    @Body() updateCastDatas: UpdateCastType[],
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
-    return this.castService.updateCastByArray(updateCastDtos);
+    return this.castService.updateCastByArray(updateCastDatas);
   }
 
   @UseGuards(RolesGuard)

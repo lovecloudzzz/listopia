@@ -22,18 +22,18 @@ export class ThemeController {
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Post()
-  async createTheme(@Body() createThemeDto: CreateThemeType) {
-    return this.themeService.createTheme(createThemeDto);
+  async createTheme(@Body() createThemeData: CreateThemeType) {
+    return this.themeService.createTheme(createThemeData);
   }
 
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put(':id')
   async updateTheme(
-    @Body() updateThemeDto: UpdateThemeType,
+    @Body() updateThemeData: UpdateThemeType,
     @Param('id') id: number,
   ) {
-    return this.themeService.updateTheme({ ...updateThemeDto, id: id });
+    return this.themeService.updateTheme({ ...updateThemeData, id: id });
   }
 
   @UseGuards(RolesGuard)

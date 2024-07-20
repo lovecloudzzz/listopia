@@ -25,9 +25,9 @@ export class BookService {
     return existingBook;
   }
 
-  async getBooks(getBooksDto: GetBooksType): Promise<Book[]> {
+  async getBooks(getBooksData: GetBooksType): Promise<Book[]> {
     const { page, pageSize, sortField, sortOrder, genreIds, themeIds } =
-      getBooksDto;
+      getBooksData;
 
     const skip = (page - 1) * pageSize;
     const take = pageSize;
@@ -53,7 +53,7 @@ export class BookService {
     });
   }
 
-  async createBook(createBookDto: CreateBookType): Promise<Book> {
+  async createBook(createBookData: CreateBookType): Promise<Book> {
     const {
       title,
       description,
@@ -67,7 +67,7 @@ export class BookService {
       status,
       pageCount,
       ageRating,
-    } = createBookDto;
+    } = createBookData;
 
     let posterPath = '';
     if (poster) {
@@ -110,7 +110,7 @@ export class BookService {
     return book;
   }
 
-  async updateBook(updateBookDto: UpdateBookType): Promise<Book> {
+  async updateBook(updateBookData: UpdateBookType): Promise<Book> {
     const {
       id,
       title,
@@ -125,7 +125,7 @@ export class BookService {
       status,
       pageCount,
       ageRating,
-    } = updateBookDto;
+    } = updateBookData;
 
     const existingBook = await this.prisma.book.findUnique({ where: { id } });
     if (!existingBook) {
