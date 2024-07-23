@@ -31,13 +31,43 @@ enum MediaType {
   VIDEO
 }
 
-enum ContentStatus {
+enum ListItemStatus {
   PLANNED
   WATCHED
   WATHCING
   REWATCHING
   POSTPONED
   DROPPED
+}
+
+enum BookStatus {
+  ANNOUNCED
+  WRITING
+  EDITING
+  AIRING
+  PUBLISHED
+  CANCELLED
+  UNKNOWN
+}
+
+enum MovieStatus {
+  ANNOUNCED
+  IN_PRODUCTION
+  POST_PRODUCTION
+  RELEASED
+  ONGOING
+  COMPLETED
+  CANCELLED
+  UNKNOWN
+}
+
+enum GameStatus {
+  ANNOUNCED
+  IN_DEVELOPE
+  EARLY_ACCESS
+  RELEASED
+  CANCELLED
+  UNKNOWN
 }
 
 enum MovieType {
@@ -272,7 +302,7 @@ model Person {
   birthday    DateTime?
   country     String?
   career      PersonCareer[] // Список карьер (актера, режиссера, писателя и т.д.)
-  directed    Movie[]        @relation("DirectedMovies")
+  directed    Movie[]        @relation("DirectorsMovies")
   books       Book[]         @relation("PersonBooks")
   MovieCast   MovieCast[]
   BookCast    BookCast[]
@@ -360,9 +390,10 @@ model Book {
   title         String
   description   String?
   authors       Person[]        @relation("PersonBooks")
-  release       DateTime
   posterPath    String?
-  pageCount     Int
+  release       DateTime?
+  status        BookStatus      @default(UNKNOWN)
+  pageCount     Int             @default(0)
   ageRating     AgeRating       @default(NR)
   genres        Genre[]
   themes        Theme[]
@@ -417,8 +448,9 @@ model Movie {
   description    String?
   MovieType      MovieType        @default(LIVE_ACTION)
   posterPath     String?
-  director       Person           @relation("DirectedMovies", fields: [personId], references: [id])
-  release        DateTime
+  directors      Person[]         @relation("DirectorsMovies")
+  release        DateTime?
+  status         MovieStatus      @default(UNKNOWN)
   duration       Int              @default(0)
   isSeries       Boolean          @default(false)
   seriesCount    Int              @default(1)
@@ -428,8 +460,6 @@ model Movie {
   studios        Studio[]         @relation("MovieStudios")
   MovieFranchise MovieFranchise[]
   MovieCast      MovieCast[]
-
-  personId Int
 
   MovieListItem         MovieListItem[]
   CustomCollectionMovie CustomCollectionMovie[]
@@ -491,19 +521,17 @@ model Game {
   title         String
   description   String?
   posterPath    String?
-  developer     Developer       @relation(fields: [developerId], references: [id])
+  developers    Developer[]
   duration      Int             @default(0)
-  release       DateTime
+  release       DateTime?
+  status        GameStatus      @default(UNKNOWN)
   ageRating     AgeRating       @default(NR)
   genres        Genre[]
   themes        Theme[]
   platforms     Platform[]
-  publisher     Publisher       @relation(fields: [publisherId], references: [id])
+  publishers    Publisher[]
   GameFranchise GameFranchise[]
   GameCast      GameCast[]
-
-  publisherId Int
-  developerId Int
 
   GameListItem         GameListItem[]
   CustomCollectionGame CustomCollectionGame[]
@@ -522,7 +550,7 @@ model Developer {
   description String? @default("")
   logoPath    String?
 
-  Game Game[]
+  games Game[]
 }
 
 model Publisher {
@@ -585,9 +613,9 @@ model BookListItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  status   ContentStatus
+  status   ListItemStatus
   note     String
-  rewathed Int           @default(0)
+  rewathed Int            @default(0)
   current  Int // страница
 
   rating Rating @relation(fields: [ratingId], references: [id])
@@ -604,9 +632,9 @@ model MovieListItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  status   ContentStatus
+  status   ListItemStatus
   note     String
-  rewathed Int           @default(0)
+  rewathed Int            @default(0)
   current  Int // серия
 
   rating Rating @relation(fields: [ratingId], references: [id])
@@ -623,9 +651,9 @@ model GameListItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  status   ContentStatus
+  status   ListItemStatus
   note     String
-  rewathed Int           @default(0)
+  rewathed Int            @default(0)
   current  Int // часов прохождения
 
   rating Rating @relation(fields: [ratingId], references: [id])
