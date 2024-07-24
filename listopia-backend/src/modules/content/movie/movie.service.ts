@@ -1,5 +1,6 @@
 import { FileUtil } from '@common/utils/file.util';
 import { CastService } from '@modules/content/cast/cast.service';
+import { FranchiseService } from '@modules/content/franchise/franchise.service';
 import type { CreateMovieType } from '@modules/content/movie/types/createMovie.type';
 import type { GetMoviesType } from '@modules/content/movie/types/getMovies.type';
 import type { UpdateMovieType } from '@modules/content/movie/types/updateMovie.type';
@@ -13,6 +14,7 @@ export class MovieService {
     private readonly prisma: PrismaService,
     private readonly fileUtil: FileUtil,
     private readonly castService: CastService,
+    private readonly franchiseService: FranchiseService,
   ) {}
 
   async getMovie(id: number): Promise<Movie> {
@@ -106,10 +108,13 @@ export class MovieService {
         genres: {
           connect: genres_ids.map((id) => ({ id })),
         },
-        MovieFranchise: {
-          connect: franchise_ids.map((id) => ({ id })),
-        },
       },
+    });
+
+    await this.franchiseService.addToFranchises({
+      franchiseIds: franchise_ids,
+      contentId: movie.id,
+      contentType: 'MOVIE',
     });
 
     if (cast && cast.length > 0) {
@@ -206,7 +211,7 @@ export class MovieService {
     });
 
     if (cast && cast.length > 0) {
-      await this.castService.updateCastByArray(cast);
+      await this.castService.updateCasts(cast);
     }
 
     return movie;

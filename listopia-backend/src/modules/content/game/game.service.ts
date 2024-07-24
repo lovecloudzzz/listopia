@@ -1,5 +1,6 @@
 import { FileUtil } from '@common/utils/file.util';
 import { CastService } from '@modules/content/cast/cast.service';
+import { FranchiseService } from '@modules/content/franchise/franchise.service';
 import type { CreateGameType } from '@modules/content/game/types/createGame.type';
 import type { GetGamesType } from '@modules/content/game/types/getGames.type';
 import type { UpdateGameType } from '@modules/content/game/types/updateGame.type';
@@ -13,6 +14,7 @@ export class GameService {
     private readonly prisma: PrismaService,
     private readonly fileUtil: FileUtil,
     private readonly castService: CastService,
+    private readonly franchiseService: FranchiseService,
   ) {}
 
   async getGame(id: number): Promise<Game> {
@@ -104,10 +106,13 @@ export class GameService {
         genres: {
           connect: genres_ids.map((id) => ({ id })),
         },
-        GameFranchise: {
-          connect: franchise_ids.map((id) => ({ id })),
-        },
       },
+    });
+
+    await this.franchiseService.addToFranchises({
+      franchiseIds: franchise_ids,
+      contentId: game.id,
+      contentType: 'GAME',
     });
 
     if (cast && cast.length > 0) {
@@ -206,7 +211,7 @@ export class GameService {
     });
 
     if (cast && cast.length > 0) {
-      await this.castService.updateCastByArray(cast);
+      await this.castService.updateCasts(cast);
     }
 
     return game;

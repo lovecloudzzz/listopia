@@ -1,19 +1,19 @@
+import { CollectionModule } from '@modules/content/collection/collection.module';
 import { Module } from '@nestjs/common';
-import { GenreModule } from './genre/genre.module';
-import { ThemeModule } from './theme/theme.module';
-import { PersonModule } from './person/person.module';
+import { BookModule } from './book/book.module';
+import { CastModule } from './cast/cast.module';
 import { CharacterModule } from './character/character.module';
 import { DeveloperModule } from './developer/developer.module';
-import { PublisherModule } from './publisher/publisher.module';
-import { CastModule } from './cast/cast.module';
-import { StudioModule } from './studio/studio.module';
-import { PlatformModule } from './platform/platform.module';
 import { FranchiseModule } from './franchise/franchise.module';
-import { BookModule } from './book/book.module';
 import { GameModule } from './game/game.module';
-import { MovieModule } from './movie/movie.module';
+import { GenreModule } from './genre/genre.module';
 import { ListModule } from './list/list.module';
-import { CustomCollectionModule } from './custom-collection/custom-collection.module';
+import { MovieModule } from './movie/movie.module';
+import { PersonModule } from './person/person.module';
+import { PlatformModule } from './platform/platform.module';
+import { PublisherModule } from './publisher/publisher.module';
+import { StudioModule } from './studio/studio.module';
+import { ThemeModule } from './theme/theme.module';
 
 @Module({
   imports: [
@@ -31,7 +31,7 @@ import { CustomCollectionModule } from './custom-collection/custom-collection.mo
     GameModule,
     MovieModule,
     ListModule,
-    CustomCollectionModule,
+    CollectionModule,
   ],
 })
 export class ContentModule {}

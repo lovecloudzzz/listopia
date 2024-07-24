@@ -14,7 +14,13 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { Franchise } from '@prisma/client';
+import {
+  BookFranchise,
+  ContentType,
+  Franchise,
+  GameFranchise,
+  MovieFranchise,
+} from '@prisma/client';
 import { FranchiseService } from './franchise.service';
 
 @Controller('franchise')
@@ -60,5 +66,35 @@ export class FranchiseController {
   @Delete(':id')
   async deleteFranchise(@Param('id') id: number): Promise<Franchise> {
     return this.franchiseService.deleteFranchise(id);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('Admin', 'Developer', 'Editor')
+  @Post(':id/content/:contentType/:contentId')
+  async addToFranchise(
+    @Param('id') franchiseId: number,
+    @Param('contentType') contentType: ContentType,
+    @Param('id') contentId: number,
+  ): Promise<BookFranchise | MovieFranchise | GameFranchise> {
+    return this.franchiseService.addToFranchise({
+      contentId: contentId,
+      franchiseId: franchiseId,
+      contentType: contentType,
+    });
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('Admin', 'Developer', 'Editor')
+  @Delete(':id/content/:contentType/:contentId')
+  async deleteFromFranchise(
+    @Param('id') franchiseId: number,
+    @Param('contentType') contentType: ContentType,
+    @Param('id') contentId: number,
+  ): Promise<BookFranchise | MovieFranchise | GameFranchise> {
+    return this.franchiseService.deleteFromFranchise({
+      contentId: contentId,
+      franchiseId: franchiseId,
+      contentType: contentType,
+    });
   }
 }

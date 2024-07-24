@@ -3,6 +3,7 @@ import type { CreateBookType } from '@modules/content/book/types/createBook.type
 import type { GetBooksType } from '@modules/content/book/types/getBooks.type';
 import type { UpdateBookType } from '@modules/content/book/types/updateBook.type';
 import { CastService } from '@modules/content/cast/cast.service';
+import { FranchiseService } from '@modules/content/franchise/franchise.service';
 import { Injectable } from '@nestjs/common';
 import { Book, Prisma } from '@prisma/client';
 import { PrismaService } from '@prismaPath/prisma.service';
@@ -13,6 +14,7 @@ export class BookService {
     private readonly prisma: PrismaService,
     private readonly fileUtil: FileUtil,
     private readonly castService: CastService,
+    private readonly franchiseService: FranchiseService,
   ) {}
 
   async getBook(id: number): Promise<Book> {
@@ -96,10 +98,13 @@ export class BookService {
         genres: {
           connect: genres_ids.map((id) => ({ id })),
         },
-        BookFranchise: {
-          connect: franchise_ids.map((id) => ({ id })),
-        },
       },
+    });
+
+    await this.franchiseService.addToFranchises({
+      franchiseIds: franchise_ids,
+      contentId: book.id,
+      contentType: 'BOOK',
     });
 
     if (cast && cast.length > 0) {
@@ -185,7 +190,7 @@ export class BookService {
     });
 
     if (cast && cast.length > 0) {
-      await this.castService.updateCastByArray(cast);
+      await this.castService.updateCasts(cast);
     }
 
     return book;

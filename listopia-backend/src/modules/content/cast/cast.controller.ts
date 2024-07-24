@@ -62,10 +62,10 @@ export class CastController {
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer', 'Editor')
   @Put('array')
-  async updateCastByArray(
-    @Body() updateCastDatas: UpdateCastType[],
+  async updateCasts(
+    @Body() updateCastsData: UpdateCastType[],
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
-    return this.castService.updateCastByArray(updateCastDatas);
+    return this.castService.updateCasts(updateCastsData);
   }
 
   @UseGuards(RolesGuard)

@@ -182,7 +182,7 @@ export class CastService {
     }
   }
 
-  async updateCastByArray(
+  async updateCasts(
     updateCastDatas: UpdateCastType[],
   ): Promise<(BookCast | MovieCast | GameCast)[]> {
     const casts = [];
