@@ -1,24 +1,19 @@
 import { JwtAuthGuard } from '@common/guards/JWTGuard/jwt-auth.guard';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { JwtService } from '@nestjs/jwt';
 import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly jwtAuthGuard: JwtAuthGuard,
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
-    const jwtAuthGuard = new JwtAuthGuard(this.jwtService, this.configService);
-    const canActivate = jwtAuthGuard.canActivate(context);
-
-    if (!canActivate) {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const jwtCanActivate = await this.jwtAuthGuard.canActivate(context);
+    if (!jwtCanActivate) {
       return false;
     }
 
@@ -27,9 +22,21 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const ctx = GqlExecutionContext.create(context);
-    const request = ctx.getContext().req;
-    const user = request.user;
+    const ctxType = context.getType<string>();
+
+    let user: { role: UserRole };
+
+    if (ctxType === 'http') {
+      const httpContext = context.switchToHttp();
+      const request = httpContext.getRequest();
+      user = request.user;
+    } else if (ctxType === 'graphql') {
+      const gqlContext = GqlExecutionContext.create(context);
+      const request = gqlContext.getContext().req;
+      user = request.user;
+    } else {
+      return false;
+    }
 
     return roles.includes(user.role);
   }
