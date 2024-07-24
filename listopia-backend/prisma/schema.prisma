@@ -666,6 +666,7 @@ model GameListItem {
 }
 
 model BookFranchise {
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -674,11 +675,11 @@ model BookFranchise {
 
   franchiseId Int
   bookId      Int
-
-  @@id([franchiseId, bookId])
 }
 
 model MovieFranchise {
+  id Int @id @default(autoincrement())
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -687,11 +688,10 @@ model MovieFranchise {
 
   franchiseId Int
   movieId     Int
-
-  @@id([franchiseId, movieId])
 }
 
 model GameFranchise {
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -700,8 +700,6 @@ model GameFranchise {
 
   franchiseId Int
   gameId      Int
-
-  @@id([franchiseId, gameId])
 }
 
 model CustomCollection {
