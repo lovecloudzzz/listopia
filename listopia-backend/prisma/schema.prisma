@@ -233,19 +233,6 @@ model ChatParticipant {
   @@unique([chatId, userId])
 }
 
-model Rating {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-
-  rating Int // 1-100
-  review String @default("")
-
-  BookListItem  BookListItem[]
-  MovieListItem MovieListItem[]
-  GameListItem  GameListItem[]
-}
-
 model Franchise {
   id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now())
@@ -609,64 +596,65 @@ model GameComment {
 }
 
 model BookListItem {
-  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  status   ListItemStatus
-  note     String
-  rewathed Int            @default(0)
-  current  Int // страница
+  status      ListItemStatus
+  note        String?
+  repeatCount Int?           @default(0)
+  current     Int            @default(0) // страница
+  rating      Int? // 1-100
+  review      String?
 
-  rating Rating @relation(fields: [ratingId], references: [id])
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  book   Book   @relation(fields: [bookId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id])
 
-  userId   Int
-  bookId   Int
-  ratingId Int
+  userId Int
+  bookId Int
+
+  @@id([userId, bookId])
 }
 
 model MovieListItem {
-  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  status   ListItemStatus
-  note     String
-  rewathed Int            @default(0)
-  current  Int // серия
+  status      ListItemStatus
+  note        String?
+  repeatCount Int?           @default(0)
+  current     Int            @default(0) // серия
+  rating      Int? // 1-100
+  review      String?
 
-  rating Rating @relation(fields: [ratingId], references: [id])
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  movie  Movie  @relation(fields: [movieId], references: [id])
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movie Movie @relation(fields: [movieId], references: [id])
 
-  userId   Int
-  movieId  Int
-  ratingId Int
+  userId  Int
+  movieId Int
+
+  @@id([userId, movieId])
 }
 
 model GameListItem {
-  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  status   ListItemStatus
-  note     String
-  rewathed Int            @default(0)
-  current  Int // часов прохождения
+  status      ListItemStatus
+  note        String?
+  repeatCount Int?           @default(0)
+  current     Int            @default(0) // час прохождения
+  rating      Int? // 1-100
+  review      String?
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game        Game           @relation(fields: [gameId], references: [id])
 
-  rating Rating @relation(fields: [ratingId], references: [id])
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  game   Game   @relation(fields: [gameId], references: [id])
+  userId Int
+  gameId Int
 
-  userId   Int
-  gameId   Int
-  ratingId Int
+  @@id([userId, gameId])
 }
 
 model BookFranchise {
-  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -675,11 +663,11 @@ model BookFranchise {
 
   franchiseId Int
   bookId      Int
+
+  @@id([franchiseId, bookId])
 }
 
 model MovieFranchise {
-  id Int @id @default(autoincrement())
-
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -688,10 +676,11 @@ model MovieFranchise {
 
   franchiseId Int
   movieId     Int
+
+  @@id([franchiseId, movieId])
 }
 
 model GameFranchise {
-  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -700,6 +689,8 @@ model GameFranchise {
 
   franchiseId Int
   gameId      Int
+
+  @@id([franchiseId, gameId])
 }
 
 model CustomCollection {
@@ -721,7 +712,6 @@ model CustomCollection {
 }
 
 model CustomCollectionBook {
-  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -730,10 +720,11 @@ model CustomCollectionBook {
 
   customCollectionId Int
   bookId             Int
+
+  @@id([customCollectionId, bookId])
 }
 
 model CustomCollectionMovie {
-  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -742,10 +733,11 @@ model CustomCollectionMovie {
 
   movie   Movie @relation(fields: [movieId], references: [id])
   movieId Int
+
+  @@id([customCollectionId, movieId])
 }
 
 model CustomCollectionGame {
-  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -754,6 +746,8 @@ model CustomCollectionGame {
 
   gameId             Int
   customCollectionId Int
+
+  @@id([customCollectionId, gameId])
 }
 
 model Post {
