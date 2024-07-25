@@ -57,7 +57,8 @@ export class ListService {
 
     return this.prisma[this.getModelName(contentType)].upsert({
       where,
-      data: updateData,
+      create: { userId, contentId, status },
+      update: updateData,
     });
   }
 
@@ -69,6 +70,25 @@ export class ListService {
     return this.prisma[this.getModelName(contentType)].delete({
       where,
     });
+  }
+
+  async getAllListItemsByUser(userId: number) {
+    const bookItems = await this.prisma.bookListItem.findMany({
+      where: { userId },
+    });
+    const gameItems = await this.prisma.gameListItem.findMany({
+      where: { userId },
+    });
+    const movieItems = await this.prisma.movieListItem.findMany({
+      where: { userId },
+    });
+    return { bookItems, gameItems, movieItems };
+  }
+
+  async getListItemsByTypeAndStatus(data: Omit<ListItemType, 'contentId'>) {
+    const { userId, contentType, status } = data;
+    const where = { userId, status };
+    return this.prisma[this.getModelName(contentType)].findMany({ where });
   }
 
   private getModelName(contentType: ContentType): string {

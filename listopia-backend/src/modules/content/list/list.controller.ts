@@ -1,14 +1,27 @@
 import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '@common/guards/JWTGuard/jwt-auth.guard';
-import { UserPayload } from '@modules/auth/types/user-payload.type';
+import type { UserPayload } from '@modules/auth/types/user-payload.type';
 import type {
-  baseListItemType,
   ListItemNoteType,
   ListItemRatingType,
   ListItemReviewType,
   ListItemType,
 } from '@modules/content/list/types/listItem.type';
-import { Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  BookStatus,
+  ContentType,
+  GameStatus,
+  MovieStatus,
+} from '@prisma/client';
 import { ListService } from './list.service';
 
 @Controller('list')
@@ -16,52 +29,106 @@ export class ListController {
   constructor(private readonly listService: ListService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post('note')
+  @Post(':contentType/:contentId/note')
   async addOrUpdateNote(
-    @Body() data: Omit<ListItemNoteType, 'userId'>,
+    @Param('contentType') contentType: ContentType,
+    @Param('contentId') contentId: number,
+    @Body()
+    data: Omit<ListItemNoteType, 'userId' | 'contentType' | 'contentId'>,
     @CurrentUser() user: UserPayload,
   ) {
     const userId = user.id;
-    return this.listService.addOrUpdateNote({ ...data, userId });
+    return this.listService.addOrUpdateNote({
+      ...data,
+      userId,
+      contentType,
+      contentId,
+    });
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('rating')
+  @Post(':contentType/:contentId/rating')
   async addOrUpdateRating(
-    @Body() data: Omit<ListItemRatingType, 'userId'>,
+    @Param('contentType') contentType: ContentType,
+    @Param('contentId') contentId: number,
+    @Body()
+    data: Omit<ListItemRatingType, 'userId' | 'contentType' | 'contentId'>,
     @CurrentUser() user: UserPayload,
   ) {
     const userId = user.id;
-    return this.listService.addOrUpdateRating({ ...data, userId });
+    return this.listService.addOrUpdateRating({
+      ...data,
+      userId,
+      contentType,
+      contentId,
+    });
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('review')
+  @Post(':contentType/:contentId/review')
   async addOrUpdateReview(
-    @Body() data: Omit<ListItemReviewType, 'userId'>,
+    @Param('contentType') contentType: ContentType,
+    @Param('contentId') contentId: number,
+    @Body()
+    data: Omit<ListItemReviewType, 'userId' | 'contentType' | 'contentId'>,
     @CurrentUser() user: UserPayload,
   ) {
     const userId = user.id;
-    return this.listService.addOrUpdateReview({ ...data, userId });
+    return this.listService.addOrUpdateReview({
+      ...data,
+      userId,
+      contentType,
+      contentId,
+    });
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('status')
+  @Post(':contentType/:contentId')
   async addOrUpdateListItem(
-    @Body() data: Omit<ListItemType, 'userId'>,
+    @Param('contentType') contentType: ContentType,
+    @Param('contentId') contentId: number,
+    @Body() data: Omit<ListItemType, 'userId' | 'contentType' | 'contentId'>,
     @CurrentUser() user: UserPayload,
   ) {
     const userId = user.id;
-    return this.listService.addOrUpdateListItem({ ...data, userId });
+    return this.listService.addOrUpdateListItem({
+      ...data,
+      userId,
+      contentType,
+      contentId,
+    });
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete('item')
+  @Delete(':contentType/:contentId')
   async deleteListItem(
-    @Body() data: Omit<baseListItemType, 'userId'>,
+    @Param('contentType') contentType: ContentType,
+    @Param('contentId') contentId: number,
     @CurrentUser() user: UserPayload,
   ) {
     const userId = user.id;
-    return this.listService.deleteListItem({ ...data, userId });
+    return this.listService.deleteListItem({ userId, contentType, contentId });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getAllListItems(@CurrentUser() user: UserPayload) {
+    const userId = user.id;
+    return this.listService.getAllListItemsByUser(userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':contentType/:status')
+  async getListItemsByTypeAndStatus(
+    @Param('contentType') contentType: ContentType,
+    @Param('status') status: BookStatus | MovieStatus | GameStatus,
+    @CurrentUser() user: UserPayload,
+  ) {
+    const userId = user.id;
+    return this.listService.getListItemsByTypeAndStatus({
+      userId,
+      contentType,
+      status,
+    });
   }
 }
