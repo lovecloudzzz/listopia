@@ -15,7 +15,7 @@ export class GenreService {
   async getGenresByType(type: ContentType): Promise<Genre[]> {
     return this.prisma.genre.findMany({
       where: {
-        genreType: {
+        genreTypes: {
           has: type,
         },
       },
@@ -23,7 +23,7 @@ export class GenreService {
   }
 
   async createGenre(createGenreData: CreateGenreType): Promise<Genre> {
-    const { name, description, types } = createGenreData;
+    const { name, description, genreTypes } = createGenreData;
     const existingGenre = await this.prisma.genre.findFirst({
       where: { name: name.toLowerCase() },
     });
@@ -36,13 +36,13 @@ export class GenreService {
       data: {
         name: name.toLowerCase(),
         description,
-        genreType: { set: types },
+        genreTypes: { set: genreTypes },
       },
     });
   }
 
   async updateGenre(updateGenreData: UpdateGenreType): Promise<Genre> {
-    const { id, name, description, types } = updateGenreData;
+    const { id, name, description, genreTypes } = updateGenreData;
     const existingGenre = await this.prisma.genre.findUnique({
       where: { id },
     });
@@ -56,7 +56,7 @@ export class GenreService {
       data: {
         name: name.toLowerCase() ?? existingGenre.name,
         description: description ?? existingGenre.description,
-        genreType: types ?? existingGenre.genreType,
+        genreTypes: genreTypes ?? existingGenre.genreTypes,
       },
     });
   }
