@@ -18,7 +18,9 @@ export class BookService {
   ) {}
 
   async getBook(id: number): Promise<Book> {
-    const existingBook = this.prisma.book.findUnique({ where: { id: id } });
+    const existingBook = await this.prisma.book.findUnique({
+      where: { id: id },
+    });
 
     if (!existingBook) {
       throw new Error('Book not found');

@@ -14,13 +14,18 @@ export class CharacterService {
   ) {}
 
   async getCharacter(id: number): Promise<Character> {
-    const existingCharacter = this.prisma.character.findUnique({
+    const existingCharacter = await this.prisma.character.findUnique({
       where: { id: id },
     });
 
     if (!existingCharacter) {
       throw new Error('Character not found');
     }
+
+    this.prisma.character.update({
+      where: { id: id },
+      data: { visitCount: existingCharacter.visitCount + 1 },
+    });
 
     return existingCharacter;
   }

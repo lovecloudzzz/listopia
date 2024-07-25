@@ -18,7 +18,9 @@ export class GameService {
   ) {}
 
   async getGame(id: number): Promise<Game> {
-    const existingGame = this.prisma.game.findUnique({ where: { id: id } });
+    const existingGame = await this.prisma.game.findUnique({
+      where: { id: id },
+    });
 
     if (!existingGame) {
       throw new Error('Game not found');

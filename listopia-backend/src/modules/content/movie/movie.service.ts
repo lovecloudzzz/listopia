@@ -18,7 +18,9 @@ export class MovieService {
   ) {}
 
   async getMovie(id: number): Promise<Movie> {
-    const existingMovie = this.prisma.movie.findUnique({ where: { id: id } });
+    const existingMovie = await this.prisma.movie.findUnique({
+      where: { id: id },
+    });
 
     if (!existingMovie) {
       throw new Error('Movie not found');
