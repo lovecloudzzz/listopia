@@ -1,4 +1,5 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
+
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreatePublisherType } from '@modules/content/publisher/types/createPublisher.type';
 import type { GetPublishersType } from '@modules/content/publisher/types/getPublishers.type';

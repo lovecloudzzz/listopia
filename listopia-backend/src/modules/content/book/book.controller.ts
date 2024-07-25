@@ -1,4 +1,5 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
+
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreateBookType } from '@modules/content/book/types/createBook.type';
 import type { GetBooksType } from '@modules/content/book/types/getBooks.type';

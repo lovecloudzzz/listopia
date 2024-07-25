@@ -1,4 +1,5 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
+
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreateStudioType } from '@modules/content/studio/types/createStudio.type';
 import type { GetStudiosType } from '@modules/content/studio/types/getStudios.type';

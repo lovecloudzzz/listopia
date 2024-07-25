@@ -1,4 +1,5 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
+
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreateFranchiseType } from '@modules/content/franchise/types/createFranchise.type';
 import type { GetFranchisesType } from '@modules/content/franchise/types/getFranchises.type';

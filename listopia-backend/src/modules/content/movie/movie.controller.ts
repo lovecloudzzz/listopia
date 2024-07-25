@@ -1,4 +1,5 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
+
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreateMovieType } from '@modules/content/movie/types/createMovie.type';
 import type { GetMoviesType } from '@modules/content/movie/types/getMovies.type';

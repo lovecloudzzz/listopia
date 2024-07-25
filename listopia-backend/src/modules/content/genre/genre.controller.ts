@@ -1,4 +1,4 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreateGenreType } from '@modules/content/genre/types/createGenre.type';
 import type { UpdateGenreTypeWithoutId } from '@modules/content/genre/types/updateGenre.type';

@@ -1,4 +1,5 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
+
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreateCastType } from '@modules/content/cast/types/createCast.type';
 import type { GetCastType } from '@modules/content/cast/types/getCast.type';

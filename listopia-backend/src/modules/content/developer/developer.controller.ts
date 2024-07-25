@@ -1,4 +1,5 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
+
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreateDeveloperType } from '@modules/content/developer/types/createDeveloper.type';
 import type { GetDevelopersType } from '@modules/content/developer/types/getDevelopers.type';

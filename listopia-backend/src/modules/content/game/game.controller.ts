@@ -1,4 +1,5 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
+
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreateGameType } from '@modules/content/game/types/createGame.type';
 import type { GetGamesType } from '@modules/content/game/types/getGames.type';

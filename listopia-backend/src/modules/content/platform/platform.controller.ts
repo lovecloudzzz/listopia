@@ -1,4 +1,5 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
+
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreatePlatformType } from '@modules/content/platform/types/createPlatform.type';
 import type { GetPlatformsType } from '@modules/content/platform/types/getPlatforms.type';

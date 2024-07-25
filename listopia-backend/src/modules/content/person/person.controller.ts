@@ -1,4 +1,5 @@
-import { Roles } from '@common/guards/RolesGuard/roles.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
+
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
 import type { CreatePersonType } from '@modules/content/person/types/createPerson.type';
 import type { GetPersonsType } from '@modules/content/person/types/getPersons.type';
