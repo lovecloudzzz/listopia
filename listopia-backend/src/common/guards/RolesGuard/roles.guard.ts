@@ -1,5 +1,10 @@
 import { JwtAuthGuard } from '@common/guards/JWTGuard/jwt-auth.guard';
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { UserRole } from '@prisma/client';
@@ -35,9 +40,13 @@ export class RolesGuard implements CanActivate {
       const request = gqlContext.getContext().req;
       user = request.user;
     } else {
-      return false;
+      throw new UnauthorizedException('Unsupported context type');
     }
 
-    return roles.includes(user.role);
+    if (!user || !roles.includes(user.role)) {
+      throw new UnauthorizedException('Insufficient role');
+    }
+
+    return true;
   }
 }

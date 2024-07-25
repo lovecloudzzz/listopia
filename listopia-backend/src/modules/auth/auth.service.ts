@@ -40,8 +40,8 @@ export class AuthService {
       data: { lastLogin: new Date() },
     });
     const payload: UserPayload = {
+      id: user.id,
       username: user.username,
-      sub: user.id,
       role: user.role,
       ...(user.avatarPath && { avatar: user.avatarPath }),
       ...(user.profileName && { profileName: user.profileName }),
@@ -119,8 +119,8 @@ export class AuthService {
       throw new Error('User not found');
     }
     const payload: UserPayload = {
+      id: user.id,
       username: user.username,
-      sub: user.id,
       role: user.role,
     };
     return {

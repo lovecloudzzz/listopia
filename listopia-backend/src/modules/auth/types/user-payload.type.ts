@@ -1,6 +1,6 @@
 export type UserPayload = {
+  id: number;
   username: string;
-  sub: number;
   role: string;
   avatar?: string;
   profileName?: string;

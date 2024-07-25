@@ -4,7 +4,7 @@ export type UpdateGenreType = {
   id: number;
   name?: string;
   description?: string;
-  types?: ContentType[];
+  genreTypes?: ContentType[];
 };
 
 export type UpdateGenreTypeWithoutId = Omit<UpdateGenreType, 'id'>;

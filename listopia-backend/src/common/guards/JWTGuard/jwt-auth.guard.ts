@@ -16,9 +16,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  async canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = request.headers.authorization?.split(' ')[1];
+    const token = this.extractTokenFromHeader(request);
+
     if (!token) {
       throw new UnauthorizedException('Authorization token not found');
     }
@@ -30,5 +31,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     } catch (error) {
       throw new UnauthorizedException('Invalid authorization token');
     }
+  }
+
+  private extractTokenFromHeader(request: any): string | null {
+    const authorizationHeader = request.headers.authorization;
+    if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
+      return authorizationHeader.split(' ')[1];
+    }
+    return null;
   }
 }

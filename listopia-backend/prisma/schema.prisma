@@ -256,7 +256,7 @@ model Genre {
 
   name        String        @unique
   description String?
-  genreType   ContentType[]
+  genreTypes  ContentType[]
 
   books  Book[]
   movies Movie[]
