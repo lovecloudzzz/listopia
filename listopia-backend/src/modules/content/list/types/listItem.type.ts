@@ -23,6 +23,10 @@ export type ListItemReviewType = baseListItemType & {
   review: string | null;
 };
 
+export type ListItemCurrentType = baseListItemType & {
+  current: number | null;
+};
+
 export type ListItemType = baseListItemType & {
   status: BookStatus | MovieStatus | GameStatus;
 };
