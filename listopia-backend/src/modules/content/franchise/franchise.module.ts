@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { FranchiseService } from './franchise.service';
 import { FranchiseController } from './franchise.controller';
+import { FranchiseService } from './franchise.service';
 
 @Module({
   controllers: [FranchiseController],

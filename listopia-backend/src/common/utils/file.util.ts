@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
 
 interface SaveFileOptions {
   file: Express.Multer.File;

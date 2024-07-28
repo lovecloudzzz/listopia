@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CastService } from './cast.service';
 import { CastController } from './cast.controller';
+import { CastService } from './cast.service';
 
 @Module({
   controllers: [CastController],
