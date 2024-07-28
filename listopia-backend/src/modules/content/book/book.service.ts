@@ -1,4 +1,5 @@
 import { FileUtil } from '@common/utils/file.util';
+import { createUpdateData } from '@common/utils/updateData.util';
 import type { CreateBookType } from '@modules/content/book/types/createBook.type';
 import type { GetBooksType } from '@modules/content/book/types/getBooks.type';
 import type { UpdateBookType } from '@modules/content/book/types/updateBook.type';
@@ -69,8 +70,9 @@ export class BookService {
       franchise_ids,
       cast,
       status,
-      pageCount,
+      readingHoursCount,
       ageRating,
+      links,
     } = createBookData;
 
     let posterPath = '';
@@ -89,8 +91,9 @@ export class BookService {
         posterPath: posterPath,
         release: release,
         status: status,
-        pageCount: pageCount,
+        readingHoursCount: readingHoursCount,
         ageRating: ageRating,
+        links: links,
         authors: {
           connect: authors_ids.map((id) => ({ id })),
         },
@@ -130,8 +133,9 @@ export class BookService {
       franchise_ids,
       cast,
       status,
-      pageCount,
+      readingHoursCount,
       ageRating,
+      links,
     } = updateBookData;
 
     const existingBook = await this.prisma.book.findUnique({ where: { id } });
@@ -149,42 +153,20 @@ export class BookService {
       );
     }
 
-    const updateData: any = {
-      title: title,
-      description: description,
-      release: release,
-      status: status,
-      pageCount: pageCount,
-      ageRating: ageRating,
-    };
-
-    if (posterPath) {
-      updateData.posterPath = posterPath;
-    }
-
-    if (authors_ids) {
-      updateData.authors = {
-        set: authors_ids.map((id) => ({ id })),
-      };
-    }
-
-    if (themes_ids) {
-      updateData.themes = {
-        set: themes_ids.map((id) => ({ id })),
-      };
-    }
-
-    if (genres_ids) {
-      updateData.genres = {
-        set: genres_ids.map((id) => ({ id })),
-      };
-    }
-
-    if (franchise_ids) {
-      updateData.BookFranchise = {
-        set: franchise_ids.map((id) => ({ id })),
-      };
-    }
+    const updateData = createUpdateData({
+      title,
+      description,
+      release,
+      status,
+      readingHoursCount,
+      ageRating,
+      links,
+      posterPath,
+      authors: authors_ids,
+      themes: themes_ids,
+      genres: genres_ids,
+      BookFranchise: franchise_ids,
+    });
 
     const book = await this.prisma.book.update({
       where: { id },

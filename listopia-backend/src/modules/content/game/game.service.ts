@@ -1,4 +1,5 @@
 import { FileUtil } from '@common/utils/file.util';
+import { createUpdateData } from '@common/utils/updateData.util';
 import { CastService } from '@modules/content/cast/cast.service';
 import { FranchiseService } from '@modules/content/franchise/franchise.service';
 import type { CreateGameType } from '@modules/content/game/types/createGame.type';
@@ -159,53 +160,21 @@ export class GameService {
       );
     }
 
-    const updateData: any = {
-      title: title,
-      description: description,
-      release: release,
-      status: status,
-      duration: duration,
-      ageRating: ageRating,
-    };
-
-    if (posterPath) {
-      updateData.posterPath = posterPath;
-    }
-
-    if (developers_ids) {
-      updateData.developers = {
-        set: developers_ids.map((id) => ({ id })),
-      };
-    }
-    if (publishers_ids) {
-      updateData.publishers = {
-        set: publishers_ids.map((id) => ({ id })),
-      };
-    }
-
-    if (platforms_ids) {
-      updateData.platforms = {
-        set: platforms_ids.map((id) => ({ id })),
-      };
-    }
-
-    if (themes_ids) {
-      updateData.themes = {
-        set: themes_ids.map((id) => ({ id })),
-      };
-    }
-
-    if (genres_ids) {
-      updateData.genres = {
-        set: genres_ids.map((id) => ({ id })),
-      };
-    }
-
-    if (franchise_ids) {
-      updateData.GameFranchise = {
-        set: franchise_ids.map((id) => ({ id })),
-      };
-    }
+    const updateData = createUpdateData({
+      title,
+      description,
+      release,
+      status,
+      duration,
+      ageRating,
+      posterPath,
+      developers: developers_ids,
+      publishers: publishers_ids,
+      platforms: platforms_ids,
+      themes: themes_ids,
+      genres: genres_ids,
+      GameFranchise: franchise_ids,
+    });
 
     const game = await this.prisma.game.update({
       where: { id },

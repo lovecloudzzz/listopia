@@ -19,6 +19,7 @@ export type UpdateMovieType = {
   themes_ids?: number[];
   franchise_ids?: number[];
   cast?: UpdateCastType[];
+  links?: Record<string, string>;
 };
 
 export type UpdateMovieTypeWithoutId = Omit<UpdateMovieType, 'id'>;

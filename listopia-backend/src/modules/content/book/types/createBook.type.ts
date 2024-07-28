@@ -9,9 +9,10 @@ export type CreateBookType = {
   release?: Date;
   ageRating?: AgeRating;
   status?: BookStatus;
-  pageCount?: number;
+  readingHoursCount?: number;
   genres_ids?: number[];
   themes_ids?: number[];
   franchise_ids?: number[];
   cast?: CreateCastDataWithoutId[];
+  links?: Record<string, string>;
 };

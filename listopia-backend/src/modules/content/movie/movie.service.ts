@@ -1,4 +1,5 @@
 import { FileUtil } from '@common/utils/file.util';
+import { createUpdateData } from '@common/utils/updateData.util';
 import { CastService } from '@modules/content/cast/cast.service';
 import { FranchiseService } from '@modules/content/franchise/franchise.service';
 import type { CreateMovieType } from '@modules/content/movie/types/createMovie.type';
@@ -75,6 +76,7 @@ export class MovieService {
       seriesCount,
       duration,
       ageRating,
+      links,
     } = createMovieData;
 
     let posterPath = '';
@@ -98,6 +100,7 @@ export class MovieService {
         ageRating: ageRating,
         isSeries: isSeries,
         seriesCount: seriesCount,
+        links: links,
         directors: {
           connect: directors_ids.map((id) => ({ id })),
         },
@@ -146,6 +149,7 @@ export class MovieService {
       seriesCount,
       duration,
       ageRating,
+      links,
     } = updateMovieData;
 
     const existingMovie = await this.prisma.movie.findUnique({ where: { id } });
@@ -163,49 +167,24 @@ export class MovieService {
       );
     }
 
-    const updateData: any = {
-      title: title,
-      description: description,
-      MovieType: movieType,
-      release: release,
-      status: status,
-      duration: duration,
-      ageRating: ageRating,
-      isSeries: isSeries,
-      seriesCount: seriesCount,
-    };
-
-    if (posterPath) {
-      updateData.posterPath = posterPath;
-    }
-
-    if (directors_ids) {
-      updateData.directors = {
-        set: directors_ids.map((id) => ({ id })),
-      };
-    }
-    if (studios_ids) {
-      updateData.studios = {
-        set: studios_ids.map((id) => ({ id })),
-      };
-    }
-    if (themes_ids) {
-      updateData.themes = {
-        set: themes_ids.map((id) => ({ id })),
-      };
-    }
-
-    if (genres_ids) {
-      updateData.genres = {
-        set: genres_ids.map((id) => ({ id })),
-      };
-    }
-
-    if (franchise_ids) {
-      updateData.MovieFranchise = {
-        set: franchise_ids.map((id) => ({ id })),
-      };
-    }
+    const updateData = createUpdateData({
+      title,
+      description,
+      movieType,
+      release,
+      status,
+      duration,
+      ageRating,
+      isSeries,
+      seriesCount,
+      links,
+      posterPath,
+      directors: directors_ids,
+      studios: studios_ids,
+      themes: themes_ids,
+      genres: genres_ids,
+      MovieFranchise: franchise_ids,
+    });
 
     const movie = await this.prisma.movie.update({
       where: { id },
