@@ -374,18 +374,20 @@ model Book {
   updatedAt  DateTime @updatedAt
   visitCount Int      @default(0)
 
-  title         String
-  description   String?
-  authors       Person[]        @relation("PersonBooks")
-  posterPath    String?
-  release       DateTime?
-  status        BookStatus      @default(UNKNOWN)
-  pageCount     Int             @default(0)
-  ageRating     AgeRating       @default(NR)
-  genres        Genre[]
-  themes        Theme[]
-  BookFranchise BookFranchise[]
-  BookCast      BookCast[]
+  title             String
+  description       String?
+  authors           Person[]        @relation("PersonBooks")
+  posterPath        String?
+  release           DateTime?
+  status            BookStatus      @default(UNKNOWN)
+  readingHoursCount Int             @default(0)
+  ageRating         AgeRating       @default(NR)
+  genres            Genre[]
+  themes            Theme[]
+  BookFranchise     BookFranchise[]
+  BookCast          BookCast[]
+
+  links Json?
 
   BookListItem         BookListItem[]
   CustomCollectionBook CustomCollectionBook[]
@@ -447,6 +449,8 @@ model Movie {
   studios        Studio[]         @relation("MovieStudios")
   MovieFranchise MovieFranchise[]
   MovieCast      MovieCast[]
+
+  links Json?
 
   MovieListItem         MovieListItem[]
   CustomCollectionMovie CustomCollectionMovie[]
@@ -519,6 +523,8 @@ model Game {
   publishers    Publisher[]
   GameFranchise GameFranchise[]
   GameCast      GameCast[]
+
+  links Json?
 
   GameListItem         GameListItem[]
   CustomCollectionGame CustomCollectionGame[]
@@ -602,7 +608,8 @@ model BookListItem {
   status      ListItemStatus
   note        String?
   repeatCount Int?           @default(0)
-  current     Int            @default(0) // страница
+  current     Int            @default(0) // текущая страница
+  maxPages    Int            @default(1) // максимальная страница
   rating      Int? // 1-100
   review      String?
 
@@ -642,11 +649,12 @@ model GameListItem {
   status      ListItemStatus
   note        String?
   repeatCount Int?           @default(0)
-  current     Int            @default(0) // час прохождения
+  current     Int            @default(0) // время прохождения в часах
   rating      Int? // 1-100
   review      String?
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  game        Game           @relation(fields: [gameId], references: [id])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id])
 
   userId Int
   gameId Int

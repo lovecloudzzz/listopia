@@ -1,9 +1,4 @@
-import {
-  BookStatus,
-  ContentType,
-  GameStatus,
-  MovieStatus,
-} from '@prisma/client';
+import { ContentType, ListItemStatus } from '@prisma/client';
 
 export type baseListItemType = {
   userId: number;
@@ -28,5 +23,9 @@ export type ListItemCurrentType = baseListItemType & {
 };
 
 export type ListItemType = baseListItemType & {
-  status: BookStatus | MovieStatus | GameStatus;
+  status: ListItemStatus;
+};
+
+export type ListBookMaxPagesType = baseListItemType & {
+  maxPages: number;
 };
