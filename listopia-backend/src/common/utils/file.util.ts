@@ -11,7 +11,6 @@ interface SaveFileOptions {
 @Injectable()
 export class FileUtil {
   private readonly baseFolder = path.join(__dirname, '..', '..', 'uploads');
-  private readonly placeholderFilename = 'placeholder.png';
 
   constructor() {
     this.ensureBaseFolderExists();
@@ -44,11 +43,11 @@ export class FileUtil {
   }
 
   public async deleteFile(filePath: string): Promise<void> {
-    const absolutePath = path.join(this.baseFolder, filePath);
-
-    if (path.basename(absolutePath) === this.placeholderFilename) {
+    if (filePath === undefined) {
       return;
     }
+
+    const absolutePath = path.join(this.baseFolder, filePath);
 
     if (fs.existsSync(absolutePath)) {
       await fs.promises.unlink(absolutePath);
