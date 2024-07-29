@@ -11,9 +11,15 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@modules/*": ["src/modules/*"],
-      "@common/*": ["src/common/*"],
-      "@prismaPath/*": ["prisma/*"]
+      "@modules/*": [
+        "src/modules/*"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@prismaPath/*": [
+        "prisma/*"
+      ]
     },
     "incremental": true,
     "skipLibCheck": true,
