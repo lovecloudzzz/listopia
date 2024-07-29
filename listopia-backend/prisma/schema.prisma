@@ -119,15 +119,15 @@ model User {
   profileName  String
   role         UserRole @default(Standard)
 
-  friends                User[]             @relation("Friendship")
-  friendOf               User[]             @relation("Friendship")
-  friendRequests         FriendRequest[]    @relation("FriendRequests")
-  receivedRequests       FriendRequest[]    @relation("ReceivedRequests")
-  CustomCollection       CustomCollection[]
+  friends                User[]            @relation("Friendship")
+  friendOf               User[]            @relation("Friendship")
+  friendRequests         FriendRequest[]   @relation("FriendRequests")
+  receivedRequests       FriendRequest[]   @relation("ReceivedRequests")
+  Collections            Collection[]
   RefreshTokens          RefreshToken[]
   Post                   Post[]
   News                   News[]
-  ownedChats             Chat[]             @relation("OwnerChats")
+  ownedChats             Chat[]            @relation("OwnerChats")
   participantChats       ChatParticipant[]
   BookListItem           BookListItem[]
   MovieListItem          MovieListItem[]
@@ -137,9 +137,9 @@ model User {
   GameComment            GameComment[]
   PostComment            PostComment[]
   NewsComment            NewsComment[]
-  sentDirectMessages     DirectMessage[]    @relation("SentDirectMessages")
-  receivedDirectMessages DirectMessage[]    @relation("ReceivedDirectMessages")
-  sentChatMessages       ChatMessage[]      @relation("SentChatMessages")
+  sentDirectMessages     DirectMessage[]   @relation("SentDirectMessages")
+  receivedDirectMessages DirectMessage[]   @relation("ReceivedDirectMessages")
+  sentChatMessages       ChatMessage[]     @relation("SentChatMessages")
 }
 
 model RefreshToken {
@@ -389,11 +389,11 @@ model Book {
 
   links Json?
 
-  BookListItem         BookListItem[]
-  CustomCollectionBook CustomCollectionBook[]
-  SimilarBooks         SimilarBook[]          @relation("SimilarBooks")
-  SimilarToBooks       SimilarBook[]          @relation("SimilarToBooks")
-  BookComment          BookComment[]
+  BookListItem   BookListItem[]
+  CollectionBook CollectionBook[]
+  SimilarBooks   SimilarBook[]    @relation("SimilarBooks")
+  SimilarToBooks SimilarBook[]    @relation("SimilarToBooks")
+  BookComment    BookComment[]
 }
 
 model BookComment {
@@ -452,12 +452,12 @@ model Movie {
 
   links Json?
 
-  MovieListItem         MovieListItem[]
-  CustomCollectionMovie CustomCollectionMovie[]
-  SimilarMovie          SimilarMovie[]          @relation("SimilarMovies")
-  SimilarToMovie        SimilarMovie[]          @relation("SimilarToMovies")
-  BookComment           BookComment[]
-  MovieComment          MovieComment[]
+  MovieListItem   MovieListItem[]
+  CollectionMovie CollectionMovie[]
+  SimilarMovie    SimilarMovie[]    @relation("SimilarMovies")
+  SimilarToMovie  SimilarMovie[]    @relation("SimilarToMovies")
+  BookComment     BookComment[]
+  MovieComment    MovieComment[]
 }
 
 model Studio {
@@ -526,11 +526,11 @@ model Game {
 
   links Json?
 
-  GameListItem         GameListItem[]
-  CustomCollectionGame CustomCollectionGame[]
-  SimilarGames         SimilarGame[]          @relation("SimilarGames")
-  SimilarToGames       SimilarGame[]          @relation("SimilarToGames")
-  GameComment          GameComment[]
+  GameListItem   GameListItem[]
+  CollectionGame CollectionGame[]
+  SimilarGames   SimilarGame[]    @relation("SimilarGames")
+  SimilarToGames SimilarGame[]    @relation("SimilarToGames")
+  GameComment    GameComment[]
 }
 
 model Developer {
@@ -701,7 +701,7 @@ model GameFranchise {
   @@id([franchiseId, gameId])
 }
 
-model CustomCollection {
+model Collection {
   id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
@@ -714,48 +714,48 @@ model CustomCollection {
 
   userId Int
 
-  books  CustomCollectionBook[]
-  movies CustomCollectionMovie[]
-  games  CustomCollectionGame[]
+  books  CollectionBook[]
+  movies CollectionMovie[]
+  games  CollectionGame[]
 }
 
-model CustomCollectionBook {
+model CollectionBook {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  customCollection CustomCollection @relation(fields: [customCollectionId], references: [id], onDelete: Cascade)
-  book             Book             @relation(fields: [bookId], references: [id])
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  book       Book       @relation(fields: [bookId], references: [id])
 
-  customCollectionId Int
-  bookId             Int
+  collectionId Int
+  bookId       Int
 
-  @@id([customCollectionId, bookId])
+  @@id([collectionId, bookId])
 }
 
-model CustomCollectionMovie {
+model CollectionMovie {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  customCollection   CustomCollection @relation(fields: [customCollectionId], references: [id], onDelete: Cascade)
-  customCollectionId Int
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collectionId Int
 
   movie   Movie @relation(fields: [movieId], references: [id])
   movieId Int
 
-  @@id([customCollectionId, movieId])
+  @@id([collectionId, movieId])
 }
 
-model CustomCollectionGame {
+model CollectionGame {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  customCollection CustomCollection @relation(fields: [customCollectionId], references: [id], onDelete: Cascade)
-  game             Game             @relation(fields: [gameId], references: [id])
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  game       Game       @relation(fields: [gameId], references: [id])
 
-  gameId             Int
-  customCollectionId Int
+  gameId       Int
+  collectionId Int
 
-  @@id([customCollectionId, gameId])
+  @@id([collectionId, gameId])
 }
 
 model Post {
