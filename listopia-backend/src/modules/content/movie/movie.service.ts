@@ -6,7 +6,7 @@ import type { CreateMovieType } from '@modules/content/movie/types/createMovie.t
 import type { GetMoviesType } from '@modules/content/movie/types/getMovies.type';
 import type { UpdateMovieType } from '@modules/content/movie/types/updateMovie.type';
 import { Injectable } from '@nestjs/common';
-import { Movie, Prisma } from '@prisma/client';
+import { Movie, MovieListItem, Prisma } from '@prisma/client';
 import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
@@ -18,13 +18,23 @@ export class MovieService {
     private readonly franchiseService: FranchiseService,
   ) {}
 
-  async getMovie(id: number): Promise<Movie> {
+  async getMovie(
+    id: number,
+    userId?: number,
+  ): Promise<Movie & { movieListItem?: MovieListItem }> {
     const existingMovie = await this.prisma.movie.findUnique({
       where: { id: id },
     });
 
     if (!existingMovie) {
       throw new Error('Movie not found');
+    }
+
+    if (userId) {
+      const movieListItem = await this.prisma.movieListItem.findUnique({
+        where: { userId_movieId: { userId, movieId: id } },
+      });
+      return { ...existingMovie, movieListItem };
     }
 
     return existingMovie;

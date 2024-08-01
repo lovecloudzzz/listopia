@@ -1,6 +1,8 @@
+import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { Roles } from '@common/decorators/roles.decorator';
 
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { UserPayload } from '@modules/auth/types/user-payload.type';
 import type { CreateBookType } from '@modules/content/book/types/createBook.type';
 import type { GetBooksType } from '@modules/content/book/types/getBooks.type';
 import type { UpdateBookTypeWithoutId } from '@modules/content/book/types/updateBook.type';
@@ -23,8 +25,11 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Get(':id')
-  async getBook(@Param('id') id: number): Promise<Book> {
-    return this.bookService.getBook(id);
+  async getBook(
+    @Param('id') id: number,
+    @CurrentUser() user: UserPayload,
+  ): Promise<Book> {
+    return this.bookService.getBook(id, user?.id);
   }
 
   @Get()

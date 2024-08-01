@@ -6,7 +6,7 @@ import type { CreateGameType } from '@modules/content/game/types/createGame.type
 import type { GetGamesType } from '@modules/content/game/types/getGames.type';
 import type { UpdateGameType } from '@modules/content/game/types/updateGame.type';
 import { Injectable } from '@nestjs/common';
-import { Game, Prisma } from '@prisma/client';
+import { Game, GameListItem, Prisma } from '@prisma/client';
 import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
@@ -18,13 +18,23 @@ export class GameService {
     private readonly franchiseService: FranchiseService,
   ) {}
 
-  async getGame(id: number): Promise<Game> {
+  async getGame(
+    id: number,
+    userId?: number,
+  ): Promise<Game & { gameListItem?: GameListItem }> {
     const existingGame = await this.prisma.game.findUnique({
       where: { id: id },
     });
 
     if (!existingGame) {
       throw new Error('Game not found');
+    }
+
+    if (userId) {
+      const gameListItem = await this.prisma.gameListItem.findUnique({
+        where: { userId_gameId: { userId, gameId: id } },
+      });
+      return { ...existingGame, gameListItem };
     }
 
     return existingGame;

@@ -6,7 +6,7 @@ import type { UpdateBookType } from '@modules/content/book/types/updateBook.type
 import { CastService } from '@modules/content/cast/cast.service';
 import { FranchiseService } from '@modules/content/franchise/franchise.service';
 import { Injectable } from '@nestjs/common';
-import { Book, Prisma } from '@prisma/client';
+import { Book, BookListItem, Prisma } from '@prisma/client';
 import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
@@ -18,13 +18,23 @@ export class BookService {
     private readonly franchiseService: FranchiseService,
   ) {}
 
-  async getBook(id: number): Promise<Book> {
+  async getBook(
+    id: number,
+    userId?: number,
+  ): Promise<Book & { bookListItem?: BookListItem }> {
     const existingBook = await this.prisma.book.findUnique({
-      where: { id: id },
+      where: { id },
     });
 
     if (!existingBook) {
       throw new Error('Book not found');
+    }
+
+    if (userId) {
+      const bookListItem = await this.prisma.bookListItem.findUnique({
+        where: { userId_bookId: { userId, bookId: id } },
+      });
+      return { ...existingBook, bookListItem };
     }
 
     return existingBook;

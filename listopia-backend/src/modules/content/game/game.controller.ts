@@ -1,6 +1,8 @@
+import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { Roles } from '@common/decorators/roles.decorator';
 
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { UserPayload } from '@modules/auth/types/user-payload.type';
 import type { CreateGameType } from '@modules/content/game/types/createGame.type';
 import type { GetGamesType } from '@modules/content/game/types/getGames.type';
 import type { UpdateGameTypeWithoutId } from '@modules/content/game/types/updateGame.type';
@@ -23,8 +25,11 @@ export class GameController {
   constructor(private readonly gameService: GameService) {}
 
   @Get(':id')
-  async getGame(@Param('id') id: number): Promise<Game> {
-    return this.gameService.getGame(id);
+  async getGame(
+    @Param('id') id: number,
+    @CurrentUser() user: UserPayload,
+  ): Promise<Game> {
+    return this.gameService.getGame(id, user?.id);
   }
 
   @Get()

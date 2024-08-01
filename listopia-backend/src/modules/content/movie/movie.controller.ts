@@ -1,6 +1,8 @@
+import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { Roles } from '@common/decorators/roles.decorator';
 
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
+import type { UserPayload } from '@modules/auth/types/user-payload.type';
 import type { CreateMovieType } from '@modules/content/movie/types/createMovie.type';
 import type { GetMoviesType } from '@modules/content/movie/types/getMovies.type';
 import type { UpdateMovieTypeWithoutId } from '@modules/content/movie/types/updateMovie.type';
@@ -23,8 +25,11 @@ export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
   @Get(':id')
-  async getMovie(@Param('id') id: number): Promise<Movie> {
-    return this.movieService.getMovie(id);
+  async getMovie(
+    @Param('id') id: number,
+    @CurrentUser() user: UserPayload,
+  ): Promise<Movie> {
+    return this.movieService.getMovie(id, user?.id);
   }
 
   @Get()
