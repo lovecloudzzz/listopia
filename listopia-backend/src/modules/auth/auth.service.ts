@@ -1,8 +1,15 @@
+import type { LoginType } from '@modules/auth/types/login.type';
+import type { LogoutType } from '@modules/auth/types/logout.type';
+import type { RefreshTokenType } from '@modules/auth/types/refresh-token.type';
+import type { RegisterType } from '@modules/auth/types/register.type';
+import type { UserPayload } from '@modules/auth/types/user-payload.type';
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+import { PrismaService } from '@prismaPath/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../../../prisma/prisma.service';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -10,7 +17,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(usernameOrEmail: string, password: string): Promise<any> {
+  async validateUser(usernameOrEmail: string, password: string): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
@@ -22,7 +29,8 @@ export class AuthService {
     return null;
   }
 
-  async login(usernameOrEmail: string, password: string) {
+  async login(loginData: LoginType) {
+    const { usernameOrEmail, password } = loginData;
     const user = await this.validateUser(usernameOrEmail, password);
     if (!user) {
       throw new Error('User not found');
@@ -31,7 +39,13 @@ export class AuthService {
       where: { id: user.id },
       data: { lastLogin: new Date() },
     });
-    const payload = { username: user.username, sub: user.id, role: user.role };
+    const payload: UserPayload = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      ...(user.avatarPath && { avatar: user.avatarPath }),
+      ...(user.profileName && { profileName: user.profileName }),
+    };
     const refreshToken = uuidv4();
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
@@ -50,15 +64,29 @@ export class AuthService {
     };
   }
 
-  async register(email: string, password: string, username: string) {
+  async register(registerData: RegisterType) {
+    const { email, password, username } = registerData;
+    if (!email || !password || !username) {
+      throw new Error('All fields are required');
+    }
+
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
-    return this.prisma.user.create({
-      data: { email, passwordHash, username },
+
+    await this.prisma.user.create({
+      data: {
+        email: email,
+        passwordHash: passwordHash,
+        username: username,
+        profileName: username,
+      },
     });
+    const loginData: LoginType = { usernameOrEmail: email, password: password };
+    return this.login(loginData);
   }
 
-  async refreshToken(refreshToken: string) {
+  async refreshToken(refreshTokenData: RefreshTokenType) {
+    const { refreshToken } = refreshTokenData;
     const token = await this.prisma.refreshToken.findUnique({
       where: { token: refreshToken },
     });
@@ -90,14 +118,20 @@ export class AuthService {
     if (!user) {
       throw new Error('User not found');
     }
-    const payload = { username: user.username, sub: user.id, role: user.role };
+    const payload: UserPayload = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+    };
     return {
       access_token: this.jwtService.sign(payload),
       refresh_token: newRefreshToken,
     };
   }
 
-  async logout(userId: number, refreshToken: string) {
+  async logout(logoutData: LogoutType) {
+    const { userId, refreshToken } = logoutData;
+
     const token = await this.prisma.refreshToken.findUnique({
       where: { token: refreshToken },
     });

@@ -1,0 +1,559 @@
+@startuml
+
+enum UserRole {
+  Standard
+  Admin
+  Editor
+  Developer
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum ContentType {
+  BOOK
+  MOVIE
+  GAME
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum ContentStatus {
+  PLANNED
+  WATCHED
+  WATCHING
+  REWATCHING
+  POSTPONED
+  DROPPED
+}
+
+enum MovieType {
+  LIVE_ACTION
+  ANIME
+  ANIMATION
+}
+
+enum PersonCareer {
+  ACTOR
+  DIRECTOR
+  AUTHOR
+}
+
+enum RoleType {
+  LEAD
+  SUPPORTING
+  CAMEO
+  EXTRA
+}
+
+enum ChatParticipantRole{
+  Standard
+  Admin
+}
+
+enum AgeRating {
+  G
+  PG
+  PG_13
+  R
+  NC_17
+  NR
+}
+
+class User {
+  Int id
+  String email
+  String passwordHash
+  String username
+  Boolean active
+  UserRole role
+  User[] friends
+  Chat[] chats
+  Chat[] ownedChats
+}
+
+class RefreshToken {
+  Int id
+  String token
+  Int userId
+  DateTime createdAt
+  DateTime expiresAt
+  Boolean active
+}
+
+class FriendRequest {
+  Int id
+  Int senderId
+  Int receiverId
+  FriendRequestStatus status
+}
+
+class DirectMessage {
+  Int id
+  Int senderId
+  Int receiverId
+  String text
+  Message parent
+}
+
+class ChatMessage {
+  Int id
+  Int senderId
+  Int chatId
+  String text
+  Message parent
+}
+
+class Chat {
+  Int id
+  String title
+  String description
+  String posterPath
+  User owner
+  ChatParticipant[] participants
+}
+
+class ChatParticipant {
+  Int id
+  Int chat
+  Int user
+  String label
+  ChatParticipantRole role
+}
+
+
+
+class Rating {
+  Int id
+  Int rating
+  String review
+}
+
+class Person{
+ Int id
+ String name
+ String description
+ DateTime birthday
+ String photoPath
+ PersonCareer[] career
+ Movie[] movies
+ Book[] books
+ Cast[] casts
+}
+
+class Franchise {
+  Int id
+  String name
+  String? description
+  String? logoPath
+}
+
+class Genre {
+  Int id
+  String name
+  String description
+  GenreType[] genreType
+}
+
+class Theme {
+  Int id
+  String name
+  String description
+}
+
+class Character {
+  Int id
+  String name
+  String? description
+  String? photoPath
+  Cast[] Cast
+}
+
+class BookCast {
+  Int id
+  String? roleName
+  String? roleActor
+  String? roleAvatarPath
+  RoleType roleType
+  Person? actor
+  Character? character
+}
+
+class MovieCast {
+  Int id
+  String? roleName
+  String? roleActor
+  String? roleAvatarPath
+  RoleType roleType
+  Person? actor
+  Character? character
+}
+
+class GameCast {
+  Int id
+  String? roleName
+  String? roleActor
+  String? roleAvatarPath
+  RoleType roleType
+  Person? actor
+  Character? character
+}
+
+class Book {
+  Int id
+  Person[] authors
+  String title
+  String? description
+  String? posterPath
+  Int pageCount
+  DateTime release
+  AgeRating ageRating
+  Genre[] genres
+  Theme[] themes
+  Franchise[] franchises
+  Cast[] BookCast
+}
+
+class SimilarBook {
+  Int id
+  Int sourceBookId
+  Int targetBookId
+}
+
+class BookComment {
+  Int id
+  Book book
+  User user
+  String text
+  BookComment parent
+  BookComment[] replies
+}
+
+class Movie {
+  Int id
+  String title
+  String? description
+  String? posterPath
+  MovieType movieType
+  DateTime release
+  Person director
+  Int duration
+  Boolean isSeries
+  Int seriesCount
+  AgeRating ageRating
+  Genre[] genres
+  Theme[] themes
+  Franchise[] franchises
+  Cast[] MovieCast
+}
+
+class Studio {
+  Int id
+  String name
+  String country
+  String? logoPath
+  Movie[] movies
+}
+
+class SimilarMovie {
+  Int id
+  Int sourceMovieId
+  Int targetMovieId
+}
+
+class MovieComment {
+  Int id
+  Movie movie
+  User user
+  String text
+  MovieComment parent
+  MovieComment[] replies
+}
+
+class Game {
+  Int id
+  String title
+  String? description
+  String? posterPath
+  Int duration
+  DateTime release
+  Developer developer
+  Publisher publisher
+  AgeRating ageRating
+  Genre[] genres
+  Theme[] themes
+  Franchise[] franchises
+  Cast[] GameCast
+  Platform[] platforms
+}
+
+class Developer {
+  Int id
+  String name
+  String description
+  String country
+  String? logoPath
+  Game[] games
+}
+
+class Publisher {
+  Int id
+  String description
+  String name
+  String? logoPath
+  Game[] games
+}
+
+class Platform {
+  Int id
+  String name
+  description String
+  String logoPath
+  Game[] games
+}
+
+class SimilarGame {
+  Int id
+  Int sourceGameId
+  Int targetGameId
+}
+
+class GameComment {
+  Int id
+  Game game
+  User user
+  String text
+  GameComment parent
+  GameComment[] replies
+}
+
+class BookListItem {
+  Int id
+  Int userId
+  ContentStatus status
+  String? note
+  Rating rating
+}
+
+class MovieListItem {
+  Int id
+  Int userId
+  ContentStatus status
+  String? note
+  Rating rating
+}
+
+class GameListItem {
+  Int id
+  Int userId
+  ContentStatus status
+  String? note
+  Rating rating
+}
+
+class BookFranchise {
+  Int id
+  Int userId
+  Int bookId
+  Int franchiseId
+}
+
+class MovieFranchise {
+  Int id
+  Int userId
+  Int movieId
+  Int franchiseId
+}
+
+class GameFranchise {
+  Int id
+  Int userId
+  Int gameId
+  Int franchiseId
+}
+
+
+class CustomCollection {
+  Int id
+  User user
+  String name
+  String? description
+  String? posterPath
+}
+
+class CustomCollectionBook {
+  Int id
+  Int userId
+  Int bookId
+}
+
+class CustomCollectionMovie {
+  Int id
+  Int movieId
+  Int bookId
+}
+
+class CustomCollectionGame {
+  Int id
+  Int userId
+  Int gameId
+}
+
+class Post {
+  Int id
+  Int userId
+  String title
+  String text
+  Media[] media
+}
+
+class PostComment {
+  Int id
+  Post post
+  User user
+  String text
+  PostComment parent
+  PostComment[] replies
+}
+
+class News {
+  Int id
+  Int userId
+  String title
+  String text
+  Media[] media
+}
+
+class NewsComment {
+  Int id
+  News news
+  User user
+  String text
+  NewsComment parent
+  NewsComment[] replies
+}
+
+class NewsMedia {
+  Int id
+  Int newsId
+  String mediaPath
+  MediaType mediaType
+}
+
+class PostsMedia {
+  Int id
+  Int postId
+  String mediaPath
+  MediaType mediaType
+}
+
+User -- RefreshToken
+User -- DirectMessage
+User -- FriendRequest
+User -- CustomCollection
+User -- Post
+User -- News
+User -- UserRole
+User -- BookListItem
+User -- GameListItem
+User -- MovieListItem
+User -- BookComment
+User -- MovieComment
+User -- GameComment
+User -- PostComment
+User -- NewsComment
+User -- ChatMessage
+
+Chat -- ChatParticipant
+Chat -- ChatMessage
+
+ChatParticipant -- User
+ChatParticipant -- ChatParticipantRole
+
+FriendRequest -- FriendRequestStatus
+
+Person -- Movie
+Person -- BookCast
+Person -- MovieCast
+Person -- GameCast
+Person -- Book
+Person -- PersonCareer
+
+AgeRating -- Book
+AgeRating -- Movie
+AgeRating -- Game
+
+Character -- BookCast
+Character -- MovieCast
+Character -- GameCast
+
+RoleType -- BookCast
+RoleType -- MovieCast
+RoleType -- GameCast
+
+ContentStatus -- BookListItem
+ContentStatus -- MovieListItem
+ContentStatus -- GameListItem
+
+Rating -- BookListItem
+Rating -- MovieListItem
+Rating -- GameListItem
+
+Franchise -- BookFranchise
+Franchise -- MovieFranchise
+Franchise -- GameFranchise
+
+CustomCollection -- CustomCollectionBook
+CustomCollection -- CustomCollectionMovie
+CustomCollection -- CustomCollectionGame
+
+Book -- BookListItem
+Book -- CustomCollectionBook
+Book -- BookFranchise
+Book -- BookCast
+Book -- SimilarBook
+Book -- BookComment
+
+Movie -- MovieListItem
+Movie -- CustomCollectionMovie
+Movie -- MovieFranchise
+Movie -- Studio
+Movie -- MovieType
+Movie -- MovieCast
+Movie -- SimilarMovie
+Movie -- MovieComment
+
+Game -- Platform
+Game -- GameListItem
+Game -- CustomCollectionGame
+Game -- GameFranchise
+Game -- Developer
+Game -- Publisher
+Game -- GameCast
+Game -- SimilarGame
+Game -- GameComment
+
+Genre -- Game
+Genre -- Movie
+Genre -- Book
+Genre -- ContentType
+
+Theme -- Game
+Theme -- Movie
+Theme -- Book
+
+NewsMedia -- News
+NewsMedia -- MediaType
+News -- NewsComment
+
+PostsMedia -- Post
+PostsMedia -- MediaType
+Post -- PostComment
+
+@enduml

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User, UserRole } from '@prisma/client';
-import { PrismaService } from '../../../prisma/prisma.service';
+import { PrismaService } from '@prismaPath/prisma.service';
 
 @Injectable()
 export class UserService {
@@ -26,10 +26,17 @@ export class UserService {
     });
   }
 
-  async isAdmin(userId: number): Promise<boolean> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+  async deactivateUser(id: number): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data: { active: false },
     });
-    return user?.role > UserRole.Standard;
+  }
+
+  async setUserRole(id: number, role: UserRole): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data: { role },
+    });
   }
 }
