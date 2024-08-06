@@ -21,10 +21,6 @@ export class StudioService {
     if (!existingStudio) {
       throw new Error('Studio not found');
     }
-    this.prisma.studio.update({
-      where: { id: id },
-      data: { visitCount: existingStudio.visitCount + 1 },
-    });
 
     return this.prisma.studio.findUnique({ where: { id } });
   }

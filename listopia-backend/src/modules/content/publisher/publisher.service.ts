@@ -21,10 +21,6 @@ export class PublisherService {
     if (!existingPublisher) {
       throw new Error('Publisher not found');
     }
-    this.prisma.publisher.update({
-      where: { id: id },
-      data: { visitCount: existingPublisher.visitCount + 1 },
-    });
 
     return this.prisma.publisher.findUnique({ where: { id } });
   }

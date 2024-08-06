@@ -8,6 +8,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { PrismaModule } from '@prismaPath/prisma.module';
+import { MiddlewareModule } from './middleware/middleware.module';
 
 @Module({
   imports: [
@@ -17,10 +18,12 @@ import { PrismaModule } from '@prismaPath/prisma.module';
     AuthModule,
     UserModule,
     ContentModule,
+    MiddlewareModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
+    MiddlewareModule,
   ],
   providers: [
     {

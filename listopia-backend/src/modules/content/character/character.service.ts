@@ -22,11 +22,6 @@ export class CharacterService {
       throw new Error('Character not found');
     }
 
-    this.prisma.character.update({
-      where: { id: id },
-      data: { visitCount: existingCharacter.visitCount + 1 },
-    });
-
     return existingCharacter;
   }
 
