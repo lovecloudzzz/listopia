@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 import { PrismaModule } from '@prismaPath/prisma.module';
 import { MiddlewareModule } from './middleware/middleware.module';
+import { TaskRunnersModule } from './task-runners/task-runners.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MiddlewareModule } from './middleware/middleware.module';
       envFilePath: '.env',
     }),
     MiddlewareModule,
+    TaskRunnersModule,
   ],
   providers: [
     {

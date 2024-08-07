@@ -380,14 +380,16 @@ model Book {
   posterPath        String?
   release           DateTime?
   status            BookStatus      @default(UNKNOWN)
-  readingHoursCount Int             @default(0)
+  readingHoursCount Int?
   ageRating         AgeRating       @default(NR)
+  rating            Float?
   genres            Genre[]
   themes            Theme[]
   BookFranchise     BookFranchise[]
   BookCast          BookCast[]
 
-  links Json?
+  links        Json?
+  translations Json?
 
   BookListItem   BookListItem[]
   CollectionBook CollectionBook[]
@@ -440,17 +442,19 @@ model Movie {
   directors      Person[]         @relation("DirectorsMovies")
   release        DateTime?
   status         MovieStatus      @default(UNKNOWN)
-  duration       Int              @default(0)
+  duration       Int?
   isSeries       Boolean          @default(false)
   seriesCount    Int              @default(1)
   ageRating      AgeRating        @default(NR)
+  rating         Float?
   genres         Genre[]
   themes         Theme[]
   studios        Studio[]         @relation("MovieStudios")
   MovieFranchise MovieFranchise[]
   MovieCast      MovieCast[]
 
-  links Json?
+  links        Json?
+  translations Json?
 
   MovieListItem   MovieListItem[]
   CollectionMovie CollectionMovie[]
@@ -513,10 +517,10 @@ model Game {
   description   String?
   posterPath    String?
   developers    Developer[]
-  duration      Int             @default(0)
   release       DateTime?
   status        GameStatus      @default(UNKNOWN)
   ageRating     AgeRating       @default(NR)
+  rating        Float?
   genres        Genre[]
   themes        Theme[]
   platforms     Platform[]
@@ -524,7 +528,8 @@ model Game {
   GameFranchise GameFranchise[]
   GameCast      GameCast[]
 
-  links Json?
+  links        Json?
+  translations Json?
 
   GameListItem   GameListItem[]
   CollectionGame CollectionGame[]
