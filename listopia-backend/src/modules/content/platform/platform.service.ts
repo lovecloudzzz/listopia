@@ -21,10 +21,6 @@ export class PlatformService {
     if (!existingPlatform) {
       throw new Error('Platform not found');
     }
-    this.prisma.platform.update({
-      where: { id: id },
-      data: { visitCount: existingPlatform.visitCount + 1 },
-    });
 
     return this.prisma.platform.findUnique({ where: { id } });
   }

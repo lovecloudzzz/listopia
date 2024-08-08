@@ -82,7 +82,6 @@ export class GameService {
       franchise_ids,
       cast,
       status,
-      duration,
       ageRating,
     } = createGameData;
 
@@ -102,7 +101,6 @@ export class GameService {
         posterPath: posterPath,
         release: release,
         status: status,
-        duration: duration,
         ageRating: ageRating,
         developers: {
           connect: developers_ids.map((id) => ({ id })),
@@ -151,7 +149,6 @@ export class GameService {
       franchise_ids,
       cast,
       status,
-      duration,
       ageRating,
     } = updateGameData;
 
@@ -175,7 +172,6 @@ export class GameService {
       description,
       release,
       status,
-      duration,
       ageRating,
       posterPath,
       developers: developers_ids,

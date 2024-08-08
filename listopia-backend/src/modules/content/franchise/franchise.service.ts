@@ -42,10 +42,6 @@ export class FranchiseService {
     if (!existingFranchise) {
       throw new Error('Franchise not found');
     }
-    this.prisma.franchise.update({
-      where: { id: id },
-      data: { visitCount: existingFranchise.visitCount + 1 },
-    });
 
     return this.prisma.franchise.findUnique({ where: { id } });
   }

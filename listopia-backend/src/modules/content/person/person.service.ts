@@ -23,11 +23,6 @@ export class PersonService {
       throw new Error('Person not found');
     }
 
-    await this.prisma.person.update({
-      where: { id },
-      data: { visitCount: existingPerson.visitCount + 1 },
-    });
-
     return existingPerson;
   }
 

@@ -21,10 +21,6 @@ export class DeveloperService {
     if (!existingDeveloper) {
       throw new Error('Developer not found');
     }
-    this.prisma.developer.update({
-      where: { id: id },
-      data: { visitCount: existingDeveloper.visitCount + 1 },
-    });
 
     return this.prisma.developer.findUnique({ where: { id } });
   }

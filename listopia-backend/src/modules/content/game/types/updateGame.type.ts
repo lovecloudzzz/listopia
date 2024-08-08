@@ -12,7 +12,6 @@ export type UpdateGameType = {
   release?: Date;
   ageRating?: AgeRating;
   status?: GameStatus;
-  duration?: number;
   genres_ids?: number[];
   themes_ids?: number[];
   franchise_ids?: number[];
