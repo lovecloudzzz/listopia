@@ -1,6 +1,12 @@
 import { Roles } from '@common/decorators/roles.decorator';
 import { RolesGuard } from '@common/guards/RolesGuard/roles.guard';
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ContentType } from '@prisma/client';
 import { AverageRatingService } from './average-rating.service';
 
@@ -8,12 +14,12 @@ import { AverageRatingService } from './average-rating.service';
 export class AverageRatingController {
   constructor(private readonly averageRatingService: AverageRatingService) {}
 
-  @Post('update')
+  @Post(':contentType')
   @UseGuards(RolesGuard)
   @Roles('Admin', 'Developer')
-  async runManualUpdate(@Body('contentType') contentType: ContentType) {
+  async runManualUpdate(@Param('contentType') contentType: ContentType) {
     if (!Object.values(ContentType).includes(contentType)) {
-      throw new Error(`Invalid content type: ${contentType}`);
+      throw new BadRequestException(`Invalid content type: ${contentType}`);
     }
 
     await this.averageRatingService.runManualUpdate(contentType);
